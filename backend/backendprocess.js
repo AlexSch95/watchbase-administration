@@ -15,23 +15,116 @@ app.use(morgan("dev"));
 
 const secretKey = process.env.JWT_SECRET
 
-app.get("/api/overview/rowcounts", async (req, res) => {
+app.get('/api/overview/db-stats', async (req, res) => {
   try {
     const connection = await connectToDatabase();
-    const [rowCounts] = await connection.execute(`SELECT 
-                                                    TABLE_NAME AS 'tableName', 
-                                                    TABLE_ROWS AS 'rowCount' 
-                                                    FROM
-                                                    INFORMATION_SCHEMA.TABLES
-                                                    WHERE
-                                                    TABLE_SCHEMA = DATABASE();`)
-    res.status(200).json(rowCounts)
-  } catch (error) {
     
+    // Liste der relevanten Tabellen
+    const tables = [
+      'actors', 
+      'genres', 
+      'movies', 
+      'movies_with_actors', 
+      'movies_with_genres', 
+      'user_movies', 
+      'users'
+    ];
+
+    // Erstelle ein Array von COUNT(*) Queries mit Tabellennamen
+    const queries = tables.map(table => 
+      connection.execute(
+        `SELECT ? AS tableName, COUNT(*) AS rowCount FROM \`${table}\``,
+        [table]
+      )
+    );
+
+    // Führe alle Queries parallel aus
+    const results = await Promise.all(queries);
+    
+    // Ergebnisse in ein flaches Array umwandeln
+    const stats = results.flatMap(result => result[0]);
+
+    await connection.end();
+    
+    res.status(200).json(stats);
+
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Tabellenstatistiken:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler',
+      error: error.message
+    });
+  } 
+});
+
+app.post("/api/genres/add", async (req, res) => {
+  try {
+    const {genres} = req.body;
+
+    if (!genres || !Array.isArray(genres)) {
+      return res.status(400).json({success: false, message: "Genres müssen als Array übergeben werden"});
+    }
+
+    if (genres.length === 0) {
+      return res.status(400).json({success: false, message: "Es wurden keine Genres übergeben"})
+    }
+
+    const connection = await connectToDatabase();
+    const [existingGenres] = await connection.query("SELECT genre_name FROM genres WHERE genre_name IN (?)", [genres]);
+    console.log(existingGenres);
+    const existingNames = existingGenres.map(genre => genre.genre_name);
+    const newGenres = genres.filter(genre => !existingNames.includes(genre));
+
+    if (newGenres.length > 0) {
+      const genreValues = newGenres.map(genre => [genre]);
+      await connection.query("INSERT INTO genres (genre_name) VALUES ?", [genreValues]);
+    }
+    await connection.end();
+    res.status(201).json({
+      success: true,
+      message: newGenres.length > 0 
+      ? `Neue Genres hinzugefügt: ${newGenres.join(", ")}` 
+      : "Alle Genres existieren bereits"
+    });
+  } catch (error) {
+    return res.status(500).json({success: false, message: "Ein Fehler ist aufgetreten"})
   }
 })
 
-app.post("/api/genres/add")
+app.post("/api/actors/add", async (req, res) => {
+  try {
+    const {actors} = req.body;
+
+    if (!actors || !Array.isArray(actors)) {
+      return res.status(400).json({success: false, message: "Actors müssen als Array übergeben werden"});
+    }
+
+    if (actors.length === 0) {
+      return res.status(400).json({success: false, message: "Es wurden keine Actors übergeben"})
+    }
+
+    const connection = await connectToDatabase();
+    const [existingActors] = await connection.query("SELECT actor_name FROM actors WHERE actor_name IN (?)", [actors]);
+    console.log(existingActors);
+    const existingNames = existingActors.map(actor => actor.actor_name);
+    const newActors = actors.filter(actor => !existingNames.includes(actor));
+
+    if (newActors.length > 0) {
+      const actorValues = newActors.map(actor => [actor]);
+      await connection.query("INSERT INTO actors (actor_name) VALUES ?", [actorValues]);
+    }
+    await connection.end();
+    res.status(201).json({
+      success: true,
+      message: newActors.length > 0 
+      ? `Neue Actors hinzugefügt: ${newActors.join(", ")}` 
+      : "Alle Actors existieren bereits"
+    });
+  } catch (error) {
+    return res.status(500).json({success: false, message: "Ein Fehler ist aufgetreten"})
+  }
+})
 
 
 app.post("/api/users/login", async (req, res) => {
@@ -165,6 +258,7 @@ app.post("/api/admin/addmovie", async (req, res) => {
     //Führe die Querys aus um die Genre-Film-Beziehung einzutragen
     const [addedGenreRelation] = await connection.execute(genreRelationQuery, genreRelationData);
     const [addedActorRelation] = await connection.execute(actorRelationQuery, actorRelationData)
+    await connection.end();
     res.status(200).json({success: true, message: `Film wurde erfolgreich hinzugefügt mit der ID ${addedMovieId}`})
   } catch (error) {
     console.error(error);
