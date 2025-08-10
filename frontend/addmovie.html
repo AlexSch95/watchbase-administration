@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="de">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Admin: Add Movie</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:200,300,400,500,600,700,800&amp;display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit:200,300,400,500,600,700,800,900&amp;display=swap">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+
+<body class="bg-gradient-body">
+    <nav class="navbar navbar-expand-lg py-3" data-bs-theme="dark">
+        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="fs-3 fw-bold"><span class="brand-administrate">administrate(</span>watchBase<span class="brand-administrate">);</span></span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-3"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-3">
+                <ul class="navbar-nav mb-4 mb-lg-0 mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="./overview.html">Overview</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="./addmovie.html">Add Movie</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./addgenre.html">Add Genre</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./addactor.html">Add Actor</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div id="newMovie" class="row justify-contend-center">
+            <div class="text-center mt-5 mx-auto col-md-8">
+                <form id="movieForm">
+                    <div class="mb-3 row">
+                        <div class="col-6"><label class="form-label my-auto row" for="filmTitle">Filmtitel</label><input placeholder="Inception" class="form-control row" type="text" id="filmTitle" required=""></div>
+                        <div class="col-6"><label class="form-label my-auto row" for="director">Regisseur</label><input placeholder="Christopher Nolan" class="form-control row" type="text" id="director" required=""></div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-6"><label class="form-label my-auto row" for="releaseYear">Erscheinungsjahr</label><input placeholder="2000" class="form-control row" type="number" id="releaseYear" min="1901" max="2155" required=""></div>
+                        <div class="col-6"><label class="form-label my-auto row" for="rating">Rating</label><input placeholder="1-10" class="form-control row" type="number" id="rating" min="1.0" max="10.0" required="" step="0.1"></div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <div class="gap-1 row"><select class="form-select col" id="genreSelect" placeholder="Genre Auswählen">
+                                    <option value="" selected="">Genre auswählen</option>
+                                </select><button class="btn btn-primary text-center me-1 col-2 btn-square" id="addGenre" type="button">+</button></div>
+                            <div class="gap-1 row">
+                                <div class="gap-1 row selected-items" id="selectedGenres"><input class="form-control" type="hidden" id="genres" name="genres"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <div class="gap-1 row"><select class="form-select col" id="actorInput">
+                                    <option value="" selected="">Schauspieler auswählen</option>
+                                </select><button class="btn btn-primary text-center me-1 col-2" id="addActor" type="button">+</button></div>
+                            <div class="gap-1 row">
+                                <div class="gap-1 row selected-items" id="selectedActors"><input class="form-control" type="hidden" id="genres-1" name="genres"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col"><label class="form-label my-auto row" for="description">Kurzbeschreibung</label><textarea class="form-control row" rows="3" required="" id="description"></textarea></div>
+                    </div>
+                    <div class="mb-3 row">
+                        <div class="col-6"><label class="form-label my-auto row" for="trailerUrl">Trailer URL (YouTube)</label><input class="form-control row" type="url" id="trailerUrl" required="" placeholder="https://www.youtube.com/watch?v=..."></div>
+                        <div class="col-6"><label class="form-label my-auto row" for="posterUrl">Poster URL</label><input class="form-control row" type="url" id="posterUrl" required="" placeholder="https://example.com/poster.jpg"></div>
+                    </div>
+                    <div class="mb-3 row"><button class="btn btn-primary" type="submit">Filmkarte &amp; Modal zur Überprüfung generieren</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container py-5">
+        <div class="row" id="movieCardPreview"></div>
+        <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
+            <span id="errorText"></span>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="movieModal" tabindex="-1" aria-labelledby="movieModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="movieModalLabel">Filmtitel</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Schließen"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="movieDescription"></p>
+                    <h6>Regisseur: <span id="movieDirector"></span></h6>
+                    <h6>Genres: <span id="movieGenres"></span></h6>
+                    <h6>Schauspieler: <span id="movieActors"></span></h6>
+                    <div class="ratio ratio-16x9 mt-3">
+                        <iframe id="movieTrailer" src="" allowfullscreen allow="autoplay"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/addmovie.js"></script>
+</body>
+
+</html>
