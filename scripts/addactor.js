@@ -75,10 +75,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function pushActors(actors) {
         try {
-            console.log(actors);
+            const token = localStorage.getItem("jwttoken");
             const response = await fetch('http://localhost:3000/api/actors/add', {
                 method: "POST",
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(actors)
             });
             const responseBody = await response.json();

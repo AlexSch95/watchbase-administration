@@ -9,31 +9,20 @@ async function getRowCounts () {
         const token = localStorage.getItem("jwttoken");
         const response = await fetch("http://localhost:3000/api/overview/db-stats", {
             headers: {
-                Authorization: `Bearer ${token}`,
+                'Authorization': `Bearer ${token}`,
             }
         });
         const rowCountFromApi = await response.json();
-        rowCounts = rowCountFromApi;
-        const successMessage = {success: true, message: "Daten erfolgreich geladen!"}
-        showFeedback(successMessage);
+        rowCounts = rowCountFromApi.data;
+        showFeedback(rowCountFromApi);
     } catch (error) {
-        console.log("Fehler beim Laden", error);
-        const errorMessage = {success: false, message: "Fehler beim Laden der Daten"}
-        showFeedback(errorMessage);
+        console.log("Fehler beim Laden", error);;
     } finally {
         renderTableCards();
         combinedCalculation();
         tablesChart();
     }
 }
-
-
-    // const token = localStorage.getItem("jwttoken");
-    // const res = await fetch("http://localhost:3000/api/movies/user", {
-    // headers: {
-    // authorization: `Bearer ${token}`,
-    // },
-    // });
 
 function renderTableCards() {
     const tableInfoContainer = document.getElementById("tableCardContainer")

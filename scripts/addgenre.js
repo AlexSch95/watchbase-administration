@@ -73,10 +73,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function pushGenres(genres) {
         try {
-            console.log(genres);
+            const token = localStorage.getItem("jwttoken");
             const response = await fetch('http://localhost:3000/api/genres/add', {
                 method: "POST",
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
                 body: JSON.stringify(genres)
             });
             const responseBody = await response.json();

@@ -19,7 +19,7 @@ const secretKey = process.env.JWT_SECRET
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
   if (!authHeader){
-    return res.status(401).json({success: false, message: "Token nicht gefunden oder ungültiger Token übermittelt."});
+    return res.status(401).json({success: false, message: "Token wurde nicht übermittelt."});
   }
   const token = authHeader.split(" ")[1];
   try {
@@ -36,6 +36,13 @@ function authenticateToken(req, res, next) {
     next();
   } catch (error) {
     console.error(`Fehler in Middleware "authenticateToken": ${error}`);
+    console.log(error);
+    if (error.message.includes("jwt malformed")) {
+      return res.status(400).json({
+        success: false,
+        message: "Ungültiger oder abgelaufener Token wurde übermittelt."
+      })
+    }
     res.status(500).json({
       success: false, 
       message: "Interner Severfehler, Systemadministrator kontaktieren."
@@ -140,13 +147,13 @@ app.get('/api/overview/db-stats', authenticateToken, checkAdminPrivilege, async 
       'users'
     ];
     // Erstellt ein Array von COUNT(*) Queries mit Tabellennamen
+    const connection = await connectToDatabase();
     const queries = tables.map(table => 
       connection.execute(
         `SELECT ? AS tableName, COUNT(*) AS rowCount FROM \`${table}\``,
         [table]
       )
     );
-    const connection = await connectToDatabase();
     // Führe alle Queries parallel aus
     const results = await Promise.all(queries);
     // Ergebnisse in ein flaches Array umwandeln
@@ -233,7 +240,7 @@ app.post("/api/actors/add", authenticateToken, checkAdminPrivilege, async (req, 
     await connection.end();
     res.status(201).json({
       success: true,
-      message: newGenres.length > 0 
+      message: newActors.length > 0 
       ? `Neue Schauspieler hinzugefügt: ${newActors.join(", ")}, Nicht hinzugefügt weil bereits existent: ${existingNames.join(", ")}.` 
       : "Alle Schauspieler existieren bereits"
     });

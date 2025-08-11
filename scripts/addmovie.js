@@ -74,20 +74,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function getGenresAndActors() {
   try {
-    const responseGenres = await fetch('http://localhost:3000/api/genres')
-    const responseActors = await fetch('http://localhost:3000/api/actors')
+    const token = localStorage.getItem("jwttoken");
+    const responseGenres = await fetch('http://localhost:3000/api/genres/get-all', {
+        headers: {'Authorization': `Bearer ${token}`}
+    })
+    const responseActors = await fetch('http://localhost:3000/api/actors/get-all', {
+        headers: {'Authorization': `Bearer ${token}`}
+    })
     if (!responseGenres.ok || !responseActors.ok) {
       throw new Error(`HTTP Error: ${responseGenres.status} und ${responseActors.status}`);
     }
     const genresFromApi = await responseGenres.json();
     const actorsFromApi = await responseActors.json();
-    actors = actorsFromApi;
-    genres = genresFromApi;
+    actors = actorsFromApi.data;
+    genres = genresFromApi.data;
     console.log("Genres geladen", genres)
     console.log("Schauspieler geladen", actors);
     fillGenresAndActors(genres, actors);
   } catch (error) {
-    console.log("Fehler beim Laden", error);
+    console.log("Genres und Schauspieler konnten nicht geladen werden", error);
   }
 }
 
@@ -160,11 +165,14 @@ function previewSubmittedMovie(submittedMovie) {
 
 async function addMovie(submittedMovie) {
   try {
-    console.log(submittedMovie);
-    const response = await fetch('http://localhost:3000/api/admin/addmovie', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json',},
-    body: JSON.stringify(submittedMovie)
+    const token = localStorage.getItem("jwttoken");
+    const response = await fetch('http://localhost:3000/api/movies/add', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(submittedMovie)
     });
     const responseBody = await response.json();
     showFeedback(responseBody);
