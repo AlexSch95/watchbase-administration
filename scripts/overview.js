@@ -6,7 +6,12 @@ document.getElementById('logout')?.addEventListener('click', logout);
 
 async function getRowCounts () {
     try {
-        const response = await fetch("http://localhost:3000/api/overview/db-stats");
+        const token = localStorage.getItem("jwttoken");
+        const response = await fetch("http://localhost:3000/api/overview/db-stats", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
         const rowCountFromApi = await response.json();
         rowCounts = rowCountFromApi;
         const successMessage = {success: true, message: "Daten erfolgreich geladen!"}
@@ -21,6 +26,14 @@ async function getRowCounts () {
         tablesChart();
     }
 }
+
+
+    // const token = localStorage.getItem("jwttoken");
+    // const res = await fetch("http://localhost:3000/api/movies/user", {
+    // headers: {
+    // authorization: `Bearer ${token}`,
+    // },
+    // });
 
 function renderTableCards() {
     const tableInfoContainer = document.getElementById("tableCardContainer")

@@ -13,127 +13,67 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
-const VIEWS_DIR = Path2D.join(__dirname, 'views');
 const secretKey = process.env.JWT_SECRET
 
-app.get('/api/overview/db-stats', async (req, res) => {
+//Middleware: JWT Token verify
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  if (!authHeader){
+    return res.status(401).json({success: false, message: "Token nicht gefunden oder ungültiger Token übermittelt."});
+  }
+  const token = authHeader.split(" ")[1];
   try {
-    const connection = await connectToDatabase();
-    
-    // Liste der relevanten Tabellen
-    const tables = [
-      'actors', 
-      'genres', 
-      'movies', 
-      'movies_with_actors', 
-      'movies_with_genres', 
-      'user_movies', 
-      'users'
-    ];
-
-    // Erstelle ein Array von COUNT(*) Queries mit Tabellennamen
-    const queries = tables.map(table => 
-      connection.execute(
-        `SELECT ? AS tableName, COUNT(*) AS rowCount FROM \`${table}\``,
-        [table]
-      )
-    );
-
-    // Führe alle Queries parallel aus
-    const results = await Promise.all(queries);
-    
-    // Ergebnisse in ein flaches Array umwandeln
-    const stats = results.flatMap(result => result[0]);
-
-    await connection.end();
-    
-    res.status(200).json(stats);
-
+    const decoded = jwt.verify(token, secretKey);
+    if (decoded.adminRole !== 1) {
+      return res.status(403).json({
+        success: false, 
+        message: "JWT Token ist gültig aber enthält keine gültige Administratorrolle."
+      })
+    }
+    req.user = decoded.username;
+    req.id = decoded.id;
+    req.adminRole = decoded.adminRole
+    next();
   } catch (error) {
-    console.error('Fehler beim Abrufen der Tabellenstatistiken:', error);
+    console.error(`Fehler in Middleware "authenticateToken": ${error}`);
     res.status(500).json({
-      success: false,
-      message: 'Interner Serverfehler',
-      error: error.message
-    });
-  } 
-});
-
-app.post("/api/genres/add", async (req, res) => {
-  try {
-    const {genres} = req.body;
-
-    if (!genres || !Array.isArray(genres)) {
-      return res.status(400).json({success: false, message: "Genres müssen als Array übergeben werden"});
-    }
-
-    if (genres.length === 0) {
-      return res.status(400).json({success: false, message: "Es wurden keine Genres übergeben"})
-    }
-
-    const connection = await connectToDatabase();
-    const [existingGenres] = await connection.query("SELECT genre_name FROM genres WHERE genre_name IN (?)", [genres]);
-    console.log(existingGenres);
-    const existingNames = existingGenres.map(genre => genre.genre_name);
-    const newGenres = genres.filter(genre => !existingNames.includes(genre));
-
-    if (newGenres.length > 0) {
-      const genreValues = newGenres.map(genre => [genre]);
-      await connection.query("INSERT INTO genres (genre_name) VALUES ?", [genreValues]);
-    }
-    await connection.end();
-    res.status(201).json({
-      success: true,
-      message: newGenres.length > 0 
-      ? `Neue Genres hinzugefügt: ${newGenres.join(", ")}` 
-      : "Alle Genres existieren bereits"
-    });
-  } catch (error) {
-    return res.status(500).json({success: false, message: "Ein Fehler ist aufgetreten"})
+      success: false, 
+      message: "Interner Severfehler, Systemadministrator kontaktieren."
+    })
   }
-})
+}
 
-app.post("/api/actors/add", async (req, res) => {
+//Adminprivileges Middleware, returnt http 403 wenn administrator = 0 für den eingeloggten User
+async function checkAdminPrivilege(req, res, next) {
   try {
-    const {actors} = req.body;
-
-    if (!actors || !Array.isArray(actors)) {
-      return res.status(400).json({success: false, message: "Actors müssen als Array übergeben werden"});
-    }
-
-    if (actors.length === 0) {
-      return res.status(400).json({success: false, message: "Es wurden keine Actors übergeben"})
-    }
-
     const connection = await connectToDatabase();
-    const [existingActors] = await connection.query("SELECT actor_name FROM actors WHERE actor_name IN (?)", [actors]);
-    console.log(existingActors);
-    const existingNames = existingActors.map(actor => actor.actor_name);
-    const newActors = actors.filter(actor => !existingNames.includes(actor));
-
-    if (newActors.length > 0) {
-      const actorValues = newActors.map(actor => [actor]);
-      await connection.query("INSERT INTO actors (actor_name) VALUES ?", [actorValues]);
-    }
+    const [rows] = await connection.execute('SELECT administrator FROM users WHERE user_id = ?', [req.id]);
     await connection.end();
-    res.status(201).json({
-      success: true,
-      message: newActors.length > 0 
-      ? `Neue Actors hinzugefügt: ${newActors.join(", ")}` 
-      : "Alle Actors existieren bereits"
-    });
+    if (rows.length === 0 || rows[0].administrator !== 1) {
+      return res.status(403).json({
+        success: false, 
+        message: "Benutzer hat keine Administratorberechtigung."
+      })
+    }
+    next();
   } catch (error) {
-    return res.status(500).json({success: false, message: "Ein Fehler ist aufgetreten"})
+    console.error(`Fehler in Middleware "checkAdminPrivilege": ${error}`);
+    res.status(500).json({
+      success: false, 
+      message: "Interner Severfehler, Systemadministrator kontaktieren."
+    })
   }
-})
+}
 
-
+//Login-Route - Anmeldung im Adminsystem nur mit entsprechender Administratorrolle möglich
 app.post("/api/admin/login", async (req, res) => {
   try {
-    // Username und Passwort auslesen
     const {username, password} = req.body;
     if (username === undefined || password === undefined) {
-      return res.status(400).json({ error: "Username oder Passwort nicht übergeben." });
+      return res.status(400).json({
+        success: false,
+        message: "Kein Benutzername oder Passwort übermittelt."
+      });
     }
     const connection = await connectToDatabase();
     // Überprüfe, ob Username existiert
@@ -142,17 +82,25 @@ app.post("/api/admin/login", async (req, res) => {
     );
     await connection.end();
     if (existingUsers.length === 0) {
-      return res.status(404).json({ error: "Username existiert nicht." });
+      return res.status(404).json({
+        success: false,
+        message: "Es existiert kein Benutzer mit diesem Benutzernamen."
+      });
     }
-    // existingUsers = [user0, user1, ...]
     const user = existingUsers[0];
     const passwordHash = user.password_hash;
     // Ab hier: Passwort-Hash überprüfen
     const passwordCorrect = await bcrypt.compare(password, passwordHash);
     if (passwordCorrect === false) {
-      return res.status(401).json({success: false, message: "Passwort nicht korrekt."});
+      return res.status(401).json({
+        success: false, 
+        message: "Das eingegebene Passwort ist nicht korrekt."
+      });
     } else if (user.administrator !== 1) {
-      return res.status(401).json({success: false, message: "Benutzer hat keine Administratorrechte"})
+      return res.status(401).json({
+        success: false, 
+        message: "Benutzer hat keine Administratorberechtigung."
+      })
     }
     // Objekt erstellen, das in unserem token mit jsonwebtoken gesigned wird
     const tokenUser = {
@@ -165,86 +113,192 @@ app.post("/api/admin/login", async (req, res) => {
     //antwort ans frontend inklusive des erstellten, verschlüsselten tokens
     res.status(200).json({
       success: true,
-      message: `User ${username} erfolgreich eingeloggt.`,
+      message: `Anmeldung als ${username} erfolgreich.`,
       token: token,
       userName: user.user_name
     })
     
   } catch (error) {
-    return res.status(500).json({ error: "Fehler beim überprüfen des Passworts." });
+    console.error(`Fehler in Route "/api/admin/login": ${error}`);
+    res.status(500).json({
+      success: false, 
+      message: "Interner Severfehler, Systemadministrator kontaktieren."
+    })
   }
 });
 
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader){
-    return res.status(401).json({ error: "Kein Token" });
-  }
-  const token = authHeader.split(" ")[1];
-
+//Route um Statistiken über die Datenbank abzurufen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
+app.get('/api/overview/db-stats', authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
-    const decoded = jwt.verify(token, secretKey);
-    if (decoded.adminRole !== 1) {
-      throw new Error("Keine Admin-Berechtigung"); // Löst den catch-Block aus
-    }
-    req.user = decoded.username;
-    req.id = decoded.id;
-    req.adminRole = decoded.adminRole
-    next();
-  } catch (error) {
-    console.error(error);
-    res.sendStatus(500);
-  }
-}
-
-async function checkAdminPrivilege(req, res, next) {
-  try {
+    const tables = [
+      'actors', 
+      'genres', 
+      'movies', 
+      'movies_with_actors', 
+      'movies_with_genres', 
+      'user_movies', 
+      'users'
+    ];
+    // Erstellt ein Array von COUNT(*) Queries mit Tabellennamen
+    const queries = tables.map(table => 
+      connection.execute(
+        `SELECT ? AS tableName, COUNT(*) AS rowCount FROM \`${table}\``,
+        [table]
+      )
+    );
     const connection = await connectToDatabase();
-    const [rows] = connection.execute('SELECT adminRole FROM users WHERE id = ?', [req.user.id]);
+    // Führe alle Queries parallel aus
+    const results = await Promise.all(queries);
+    // Ergebnisse in ein flaches Array umwandeln
+    const stats = results.flatMap(result => result[0]);
     await connection.end();
-    if (rows.length === 0 || rows[0].adminRole !== 1) {
-      return res.status(403).json({success: false, message: "Admin-Berechtigung erforderlich"})
-    }
-    next();
+    res.status(200).json({
+      success: true,
+      message: "Statistiken erfolgreich abgerufen",
+      data: stats
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({success: false, message: "Datenbankfehler"})
-  }
-}
+    console.error('Fehler in Route "/api/overview/db-stats"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
+  } 
+});
 
-app.get("/api/actors", async (req, res)=>{
+//Route um Genres hinzuzufügen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
+app.post("/api/genres/add", authenticateToken, checkAdminPrivilege, async (req, res) => {
+  try {
+    const {genres} = req.body;
+    //Wenn keine Genres oder die Genres nicht als Array übergeben wurden
+    if (!genres || !Array.isArray(genres)) {
+      return res.status(400).json({
+        success: false, 
+        message: "Es wurden Fehlerhafte Daten übergeben. Falls dieses Problem weiterhin besteht kontaktieren Sie den Systemadministrator"
+      });
+    }
+    const connection = await connectToDatabase();
+    // SQL Query holt sich die genre_name Spalte für alle Genres die im Request übergeben wurden, aber schon in der DB existieren
+    const [existingGenres] = await connection.query("SELECT genre_name FROM genres WHERE genre_name IN (?)", [genres]);
+    //erstellt ein Array mit allen Genrenamen die bereits vorhanden sind
+    const existingNames = existingGenres.map(genre => genre.genre_name);
+    // filtert die im Request übergebenen Genres und fügt nur die zu "newGenres" hinzu, die laut Datenbankabfrage noch nicht vorhanden sind
+    const newGenres = genres.filter(genre => !existingNames.includes(genre));
+    //wenn mehr als 1 Genre noch nicht vorhanden ist, wird der jeweilige Genre Name in das neue Array genreValues gepackt
+    //allerdings als Array, die map funktion unten macht quasi ein Array in dem für jedes Genre ein Array enthalten ist
+    //indem dann der Genrename steht, wird benötigt um connection.query zum übermitteln zu nutzen
+    if (newGenres.length > 0) {
+      const genreValues = newGenres.map(genre => [genre]);
+      //für jeden Eintrag im array genreValues wird die Query ausgeführt und das Genre in der DB eingesetzt
+      await connection.query("INSERT INTO genres (genre_name) VALUES ?", [genreValues]);
+    }
+    await connection.end();
+    //Modulare Rückmeldung, wenn newGenres mehr als 1 werden die Genres die hinzugefügt wurden in der message übermittelt, ansonsten
+    // dass bereits alle existieren
+    res.status(201).json({
+      success: true,
+      message: newGenres.length > 0 
+      ? `Neue Genres hinzugefügt: ${newGenres.join(", ")}, Nicht hinzugefügt weil bereits existent: ${existingNames.join(", ")}.` 
+      : "Alle Genres existieren bereits"
+    });
+  } catch (error) {
+    console.error('Fehler in Route "/api/genres/add"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
+  }
+})
+
+//Route um Schauspieler hinzuzufügen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
+app.post("/api/actors/add", authenticateToken, checkAdminPrivilege, async (req, res) => {
+  try {
+    const {actors} = req.body;
+
+    if (!actors || !Array.isArray(actors)) {
+      return res.status(400).json({
+        success: false, 
+        message: "Es wurden Fehlerhafte Daten übergeben. Falls dieses Problem weiterhin besteht kontaktieren Sie den Systemadministrator"
+      });
+    }
+
+    const connection = await connectToDatabase();
+    const [existingActors] = await connection.query("SELECT actor_name FROM actors WHERE actor_name IN (?)", [actors]);
+    const existingNames = existingActors.map(actor => actor.actor_name);
+    const newActors = actors.filter(actor => !existingNames.includes(actor));
+    if (newActors.length > 0) {
+      const actorValues = newActors.map(actor => [actor]);
+      await connection.query("INSERT INTO actors (actor_name) VALUES ?", [actorValues]);
+    }
+    await connection.end();
+    res.status(201).json({
+      success: true,
+      message: newGenres.length > 0 
+      ? `Neue Schauspieler hinzugefügt: ${newActors.join(", ")}, Nicht hinzugefügt weil bereits existent: ${existingNames.join(", ")}.` 
+      : "Alle Schauspieler existieren bereits"
+    });
+  } catch (error) {
+    console.error('Fehler in Route "/api/actors/add"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
+  }
+})
+
+//Route um alle Schauspieler zu laden mit Middleware zur Tokenprüfung und Berechtigungsprüfung
+app.get("/api/actors/get-all", authenticateToken, checkAdminPrivilege, async (req, res)=>{
   try {
     const connection = await connectToDatabase();
     const [rows] = await connection.execute('SELECT * FROM actors ORDER BY actor_name;')
     await connection.end();
-    res.status(200).json(rows);
+    res.status(200).json({
+      success: true, 
+      message: "Alle Schauspieler wurden erfolgreich geladen.",
+      data: rows
+    });
   } catch (error) {
-    res.status(500).json({error: "Fehler beim Laden der Schauspieler"});
+    console.error('Fehler in Route "/api/actors/get-all"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
   }
 })
 
-app.get("/api/genres", async (req, res)=>{
+//Route um alle Genres zu laden mit Middleware zur Tokenprüfung und Berechtigungsprüfung
+app.get("/api/genres/get-all", authenticateToken, checkAdminPrivilege, async (req, res)=>{
 try {
     const connection = await connectToDatabase();
     const [rows] = await connection.execute('SELECT * FROM genres ORDER BY genre_name;')
     await connection.end();
-    res.status(200).json(rows);
+    res.status(200).json({
+      success: true, 
+      message: "Alle Genres wurden erfolgreich geladen.",
+      data: rows
+    });
   } catch (error) {
-    res.status(500).json({error: "Fehler beim Laden der Genres"});
+    console.error('Fehler in Route "/api/genres/get-all"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
   }
 })
 
-app.post("/api/admin/addmovie", async (req, res) => {
+//Route einen Neuen Film zur Datenbank hinzuzufügen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
+app.post("/api/movies/add", authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
     //destructuring des Request Body
     const { title, release_year, director,
         short_description, trailer_url,
         poster, rating, genres, actors }
         = req.body;
-    console.log(genres, actors);
     if (genres.length === 0 || actors.length === 0) {
-      console.log("1");
-      return res.status(400).json({success: false, message: "Genre und Schauspieler muss mindestens eine Auswahl haben."})
+      return res.status(400).json({
+        success: false, 
+        message: "Es muss mindestens ein Genre und ein Schauspieler für einen Film ausgewählt werden."
+      })
     }
     //Datenbank Verbindung aufbauen
     const connection = await connectToDatabase();
@@ -252,7 +306,10 @@ app.post("/api/admin/addmovie", async (req, res) => {
     //Prüfen ob schon ein Film mit dem Titel vorhanden ist, falls ja Abbruch
     const [checkMovieTitle] = await connection.execute('SELECT * FROM movies WHERE title = ?', [title])
     if (checkMovieTitle.length > 0) {
-      return res.status(400).json({success: false, message: "Film mit diesem Namen existiert bereits"});
+      return res.status(409).json({
+        success: false, 
+        message: "Es existiert bereits ein Film mit diesem Namen."
+      });
     }
     //Query fürs einfügen des Films wird vorbereitet
     const movieQuery = `INSERT INTO movies 
@@ -282,14 +339,19 @@ app.post("/api/admin/addmovie", async (req, res) => {
     const [addedGenreRelation] = await connection.execute(genreRelationQuery, genreRelationData);
     const [addedActorRelation] = await connection.execute(actorRelationQuery, actorRelationData)
     await connection.end();
-    res.status(200).json({success: true, message: `Film wurde erfolgreich hinzugefügt mit der ID ${addedMovieId}`})
+    res.status(201).json({
+      success: true, 
+      message: `Der Film wurde erfolgreich hinzugefügt.`})
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({success: false, message: "Ein Fehler ist aufgetreten"})
+    console.error('Fehler in Route "/api/movies/add"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
   }
 })
 
-
+//Helper Functions für Query Generierung anhand von dynamischen Daten
 function generateActorSearchQuery(actors) {
   //legt den Anfang der Query fest, die Query gibt alle Actors mit ihren IDs zurück, die denen entsprechen die ans Backend geschickt wurden
   let selectedActorsQuery = 'SELECT actor_id, actor_name FROM actors WHERE actor_name IN('
