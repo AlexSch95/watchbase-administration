@@ -34,12 +34,22 @@ function renderTableCards() {
                             <div class="card-body">
                                 <h4 class="card-title">Tabellenname: ${table.tableName}</h4>
                                 <p class="card-text">Datensätze: ${table.rowCount}</p>
+                                <div class="text-end">
+                                <button class="btn btn-sm btn-outline-danger text-end d-inline-block load-table-btn" data-table="${table.tableName}">Tabelle betrachten</button>
+                                </div>
                             </div>
                         </div>`;
         tableInfoContainer.appendChild(col)
 
     })
+        document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('load-table-btn')) {
+            const tableName = e.target.getAttribute('data-table');
+            loadFullTable(tableName);
+        }
+        });
 }
+
 
 function combinedCalculation() {
     let rowCounter = 0;
@@ -144,3 +154,63 @@ function tablesChart() {
     
     new Chart(chartContainer, config);
 };
+
+async function loadFullTable(tableName) {
+    try {
+        console.log(tableName);
+        const token = localStorage.getItem("jwttoken");
+        const response = await fetch(`http://localhost:3000/api/overview/table/${tableName}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        const result = await response.json();
+        showFeedback(result);
+        fillTableModal(tableName, result.data)
+    } catch (error) {
+        console.log("Fehler beim Laden der Tabelle", error);;
+    }
+}
+
+function generateTable(tableData) {
+    const tableContainer = document.getElementById("tableContent");
+    tableContainer.innerHTML = "";
+    const tableColumnNames = Object.keys(tableData[0]);
+
+    const tableHeader = document.createElement("thead");
+    const tableHeaderRow = document.createElement("tr");
+
+    tableColumnNames.forEach(columnName => {
+        const tableHeaderElement = document.createElement("th");
+        tableHeaderElement.textContent = columnName;
+        tableHeaderRow.appendChild(tableHeaderElement);
+    });
+
+    tableHeader.appendChild(tableHeaderRow);
+    tableContainer.appendChild(tableHeader);
+
+    const tableBody = tableContainer.createTBody();
+
+    tableData.forEach(item => {
+        const row = document.createElement("tr");
+        Object.values(item).forEach(value => {
+            const field = document.createElement("td");
+            field.textContent = value;
+            row.appendChild(field);
+        })
+        tableBody.appendChild(row);
+    })
+
+
+}
+
+const modal = new bootstrap.Modal(document.getElementById("modalTableInfo"));
+
+function fillTableModal(tableName, tableData) {
+    generateTable(tableData);
+    const tableNameDisplay = document.getElementById("modalTableName")
+    const rowCountDisplay = document.getElementById("modalRowCount")
+    rowCountDisplay.textContent = tableData.length;
+    tableNameDisplay.textContent = tableName;
+    modal.show();
+}

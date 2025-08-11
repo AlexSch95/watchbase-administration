@@ -173,6 +173,40 @@ app.get('/api/overview/db-stats', authenticateToken, checkAdminPrivilege, async 
   } 
 });
 
+app.get('/api/overview/table/:tableName', authenticateToken, checkAdminPrivilege, async (req, res) => {
+  try {
+    const tableName = req.params.tableName;
+    const allowedTables = [
+      'actors', 
+      'genres', 
+      'movies', 
+      'movies_with_actors', 
+      'movies_with_genres', 
+      'user_movies', 
+      'users'
+    ];
+    if (allowedTables.includes(tableName) === false) {
+      return res.status(400).json({
+        success: false,
+        message: "Der Tabellenname ist nicht erlaubt"
+      })
+    }
+    const connection = await connectToDatabase();
+    const [result] = await connection.execute(`SELECT * FROM ${tableName}`)
+    res.status(200).json({
+      success: true,
+      message: "Die Tabelle wurde erfolgreich geladen.",
+      data: result
+    })
+  } catch (error) {
+    console.error('Fehler in Route "/api/overview/table/:tableName"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
+  } 
+})
+
 //Route um Genres hinzuzufügen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
 app.post("/api/genres/add", authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
