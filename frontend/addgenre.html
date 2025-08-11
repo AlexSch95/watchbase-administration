@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Admin: Add Movie</title>
+    <title>Admin: Add Genre</title>
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:200,300,400,500,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit:200,300,400,500,600,700,800,900&amp;display=swap">
@@ -16,10 +16,12 @@
         <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="fs-3 fw-bold"><span class="brand-administrate">administrate(</span>watchBase<span class="brand-administrate">);</span></span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-3"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-3">
                 <ul class="navbar-nav mb-4 mb-lg-0 mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="./overview.html">Overview</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./addmovie.html">Add Movie</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="./addgenre.html">Add Genre</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./addactor.html">Add Actor</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./overview.html">Übersicht</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./addmovie.html">Film hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="./addgenre.html">Genre hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./addactor.html">Schauspieler hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link" id="logout">Logout</a></li>
+
                 </ul>
             </div>
         </div>
@@ -27,7 +29,7 @@
     <div class="container">
         <div id="newMovie" class="row justify-contend-center">
             <div class="text-center mt-5 mx-auto col-md-8">
-                <form id="movieForm">
+                <form id="genreForm">
                     <div class="mb-3 row">
                         <div class="col">
                             <div class="gap-1 row">
@@ -51,7 +53,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/scripts/addgenre.js"></script>
+    <script type="module" src="/scripts/addgenre.js"></script>
 </body>
 
 </html>

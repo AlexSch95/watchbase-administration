@@ -1,3 +1,5 @@
+import { showFeedback, logout } from './sharedFunctions.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const genreSelect = document.getElementById('genreSelect');
     const addGenreBtn = document.getElementById('addGenre');
@@ -63,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hiddenGenresInput.value = JSON.stringify(genresArray);
     }
 
-    document.getElementById('movieForm').addEventListener('submit', function(e) {
+    document.getElementById('genreForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const submittedGenres = {genres: genresArray}
     pushGenres(submittedGenres);
@@ -85,22 +87,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
-
-function showFeedback(responseBody) {
-  // responseBody dekonstruieren
-  const { success, message } = responseBody;
-  // Error Alert Elemente Laden
-  const errorText = document.getElementById("errorText")
-  const errorBox = document.getElementById("errorMessage")
-  if (success === true) {
-    errorText.textContent = message;
-    errorBox.classList.add('alert-success');
-  } else if (success === false) {
-    errorText.textContent = message;
-    errorBox.classList.add('alert-danger')
-  }
-  errorBox.classList.add('show');
-  setTimeout(() => {
-      document.getElementById('errorMessage').classList.remove('show');
-  }, 8000);
-}

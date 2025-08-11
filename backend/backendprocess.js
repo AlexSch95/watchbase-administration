@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
+const VIEWS_DIR = Path2D.join(__dirname, 'views');
 const secretKey = process.env.JWT_SECRET
 
 app.get('/api/overview/db-stats', async (req, res) => {
@@ -127,7 +128,7 @@ app.post("/api/actors/add", async (req, res) => {
 })
 
 
-app.post("/api/users/login", async (req, res) => {
+app.post("/api/admin/login", async (req, res) => {
   try {
     // Username und Passwort auslesen
     const {username, password} = req.body;
@@ -149,21 +150,24 @@ app.post("/api/users/login", async (req, res) => {
     // Ab hier: Passwort-Hash überprüfen
     const passwordCorrect = await bcrypt.compare(password, passwordHash);
     if (passwordCorrect === false) {
-      return res.status(401).json({error: "Passwort nicht korrekt."});
+      return res.status(401).json({success: false, message: "Passwort nicht korrekt."});
+    } else if (user.administrator !== 1) {
+      return res.status(401).json({success: false, message: "Benutzer hat keine Administratorrechte"})
     }
     // Objekt erstellen, das in unserem token mit jsonwebtoken gesigned wird
     const tokenUser = {
       id: user.user_id,
-      username: user.user_name
+      username: user.user_name,
+      adminRole: user.administrator
     }
     //erstellen des verschlüsselten Tokens mit jwt.sign
     const token = jwt.sign(tokenUser, secretKey, { expiresIn: '1h' });
     //antwort ans frontend inklusive des erstellten, verschlüsselten tokens
-    console.log(token);
     res.status(200).json({
+      success: true,
       message: `User ${username} erfolgreich eingeloggt.`,
       token: token,
-      userId: user.user_id
+      userName: user.user_name
     })
     
   } catch (error) {
@@ -180,12 +184,31 @@ function authenticateToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, secretKey);
+    if (decoded.adminRole !== 1) {
+      throw new Error("Keine Admin-Berechtigung"); // Löst den catch-Block aus
+    }
     req.user = decoded.username;
     req.id = decoded.id;
+    req.adminRole = decoded.adminRole
     next();
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
+  }
+}
+
+async function checkAdminPrivilege(req, res, next) {
+  try {
+    const connection = await connectToDatabase();
+    const [rows] = connection.execute('SELECT adminRole FROM users WHERE id = ?', [req.user.id]);
+    await connection.end();
+    if (rows.length === 0 || rows[0].adminRole !== 1) {
+      return res.status(403).json({success: false, message: "Admin-Berechtigung erforderlich"})
+    }
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({success: false, message: "Datenbankfehler"})
   }
 }
 

@@ -4,42 +4,50 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Home - Brand</title>
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <title>administrate(watchBase);</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:200,300,400,500,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit:200,300,400,500,600,700,800,900&amp;display=swap">
-    <link rel="stylesheet" href="assets/css/bss-overrides.css">
-    <link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css">
-    <link rel="stylesheet" href="assets/css/template.css">
+    <link rel="stylesheet" href="/assets/css/bss-overrides.css">
+    <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 
 <body class="bg-gradient-body">
-    <nav class="navbar navbar-expand-lg py-3" data-bs-theme="dark">
-        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="fs-3 fw-bold">watchBase.administration();</span></a><button class="navbar-toggler" data-bs-toggle="collapse"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button></div>
+    <nav class="navbar" data-bs-theme="dark">
+        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="fs-3 fw-bold"><span class="brand-administrate">administrate(</span>watchBase<span class="brand-administrate">);</span></span></a>
     </nav>
-    <header class="pt-5">
-        <div class="container">
-            <section class="position-relative py-4 py-xl-5">
-                <div class="container">
-                    <div class="row d-flex justify-content-center">
-                        <div class="col-md-6 col-xl-4">
-                            <div class="card mb-5">
-                                <div class="card-body d-flex flex-column align-items-center">
-                                    <form class="text-center" method="post">
-                                        <div class="mb-3"><input class="form-control" type="email" name="email" placeholder="Email"></div>
-                                        <div class="mb-3"><input class="form-control" type="password" name="password" placeholder="Password"></div>
-                                        <div class="mb-3"><button class="btn btn-primary w-100 d-block" type="submit">Login</button></div>
-                                    </form>
+    <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
+        <span id="errorText"></span>
+        <section>
+    </div>
+        <div class="container py-2 py-lg-5">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-2 p-md-5">
+                            <form id="loginForm" method="POST">
+                                <div class="mb-3">
+                                    <input id="loginUsername" class="form-control form-control-lg" type="text" name="username"
+                                        placeholder="Username" required>
                                 </div>
-                            </div>
+                                <div class="mb-4">
+                                    <input id="loginPassword" class="form-control form-control-lg" type="password" name="password"
+                                        placeholder="Password" required>
+                                </div>
+                                <div class="d-grid mb-3">
+                                <button class="btn btn-primary btn-lg" type="submit">
+                                    Login
+                                </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
-    </header>
-    <section></section>
+    </section>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script type="module" src="/scripts/index.js"></script>
 </body>
 
 </html>
