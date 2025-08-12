@@ -35,7 +35,7 @@ function renderTableCards() {
                                 <h4 class="card-title">Tabellenname: ${table.tableName}</h4>
                                 <p class="card-text">Datensätze: ${table.rowCount}</p>
                                 <div class="text-end">
-                                <button class="btn btn-sm btn-outline-danger text-end d-inline-block load-table-btn" data-table="${table.tableName}">Tabelle betrachten</button>
+                                <button class="btn btn-sm btn-outline-danger text-end d-inline-block load-table-btn overview-btn" data-table="${table.tableName}">Tabelle betrachten</button>
                                 </div>
                             </div>
                         </div>`;
@@ -132,12 +132,12 @@ function tablesChart() {
                 'rgb(50, 205, 50)',
                 'rgb(220, 53, 69)'
             ],
-            hoverOffset: 4
+            hoverOffset: 0
         }]
     };
     
     const config = {
-        type: "doughnut", 
+        type: "pie", 
         data: data,
         options: {
             plugins: {
@@ -157,7 +157,6 @@ function tablesChart() {
 
 async function loadFullTable(tableName) {
     try {
-        console.log(tableName);
         const token = localStorage.getItem("jwttoken");
         const response = await fetch(`http://localhost:3000/api/overview/table/${tableName}`, {
             headers: {

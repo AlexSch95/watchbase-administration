@@ -142,7 +142,7 @@ function previewSubmittedMovie(submittedMovie) {
   const colCard = document.createElement("div");
   colCard.className = "col-md-4 mb-4 mx-auto";
   colCard.innerHTML = `
-    <div class="card h-100" data-id="1">
+    <div class="card-movie-preview h-100" data-id="1">
         <img src="${submittedMovie.poster}" class="card-img-top" alt="${submittedMovie.title}" />
         <div class="card-body">
             <h5 class="movie-title">${submittedMovie.title}</h5>

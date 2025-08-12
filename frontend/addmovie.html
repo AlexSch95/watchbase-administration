@@ -5,67 +5,118 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Admin: Add Movie</title>
-    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:200,300,400,500,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit:200,300,400,500,600,700,800,900&amp;display=swap">
     <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 
-<body class="bg-gradient-body">
+<body class="background-image">
     <nav class="navbar navbar-expand-lg py-3" data-bs-theme="dark">
         <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="fs-3 fw-bold"><span class="brand-administrate">administrate(</span>watchBase<span class="brand-administrate">);</span></span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-3"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-3">
                 <ul class="navbar-nav mb-4 mb-lg-0 mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="./overview.html">Übersicht</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="./addmovie.html">Film hinzufügen</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./addgenre.html">Genre hinzufügen</a></li>
-                    <li class="nav-item"><a class="nav-link" href="./addactor.html">Schauspieler hinzufügen</a></li>
-                    <li class="nav-item"><a class="nav-link" id="logout">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./overview.html">Übersicht</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger active" href="./addmovie.html">Film hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addgenre.html">Genre hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addactor.html">Schauspieler hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" id="logout">Logout</a></li>
 
                 </ul>
             </div>
         </div>
     </nav>
     <div class="container">
-        <div id="newMovie" class="row justify-contend-center">
-            <div class="text-center mt-5 mx-auto col-md-8">
-                <form id="movieForm">
-                    <div class="mb-3 row">
-                        <div class="col-6"><label class="form-label my-auto row" for="filmTitle">Filmtitel</label><input placeholder="Inception" class="form-control row" type="text" id="filmTitle" required=""></div>
-                        <div class="col-6"><label class="form-label my-auto row" for="director">Regisseur</label><input placeholder="Christopher Nolan" class="form-control row" type="text" id="director" required=""></div>
-                    </div>
-                    <div class="mb-3 row">
-                        <div class="col-6"><label class="form-label my-auto row" for="releaseYear">Erscheinungsjahr</label><input placeholder="2000" class="form-control row" type="number" id="releaseYear" min="1901" max="2155" required=""></div>
-                        <div class="col-6"><label class="form-label my-auto row" for="rating">Rating</label><input placeholder="1-10" class="form-control row" type="number" id="rating" min="1.0" max="10.0" required="" step="0.1"></div>
-                    </div>
-                    <div class="mb-3 row">
-                        <div class="col">
-                            <div class="gap-1 row"><select class="form-select col" id="genreSelect" placeholder="Genre Auswählen">
-                                    <option value="" selected="">Genre auswählen</option>
-                                </select><button class="btn btn-primary text-center me-1 col-2 btn-square" id="addGenre" type="button">+</button></div>
-                            <div class="gap-1 row">
-                                <div class="gap-1 row selected-items" id="selectedGenres"><input class="form-control" type="hidden" id="genres" name="genres"></div>
-                            </div>
+        <div id="newMovie" class="row justify-content-center"> <!-- Korrektur: justify-content-center -->
+            <div class="mt-5 col-md-8">
+                <form id="movieForm" class="needs-validation" novalidate>
+                    <!-- 1. Zeile: Filmtitel und Regisseur -->
+                    <div class="mb-4 row g-3">
+                        <div class="col-md-6">
+                            <label for="filmTitle" class="form-label">Filmtitel</label>
+                            <input type="text" class="form-control" id="filmTitle" placeholder="Inception" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="director" class="form-label">Regisseur</label>
+                            <input type="text" class="form-control" id="director" placeholder="Christopher Nolan" required>
                         </div>
                     </div>
-                    <div class="mb-3 row">
-                        <div class="col">
-                            <div class="gap-1 row"><select class="form-select col" id="actorInput">
-                                    <option value="" selected="">Schauspieler auswählen</option>
-                                </select><button class="btn btn-primary text-center me-1 col-2" id="addActor" type="button">+</button></div>
-                            <div class="gap-1 row">
-                                <div class="gap-1 row selected-items" id="selectedActors"><input class="form-control" type="hidden" id="genres-1" name="genres"></div>
-                            </div>
+    
+                    <!-- 2. Zeile: Erscheinungsjahr und Rating -->
+                    <div class="mb-4 row g-3">
+                        <div class="col-md-6">
+                            <label for="releaseYear" class="form-label">Erscheinungsjahr</label>
+                            <input type="number" class="form-control" id="releaseYear" placeholder="2000" min="1901"
+                                max="2155" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rating" class="form-label">Rating</label>
+                            <input type="number" class="form-control" id="rating" placeholder="1-10" min="1.0" max="10.0"
+                                step="0.1" required>
                         </div>
                     </div>
-                    <div class="mb-3 row">
-                        <div class="col"><label class="form-label my-auto row" for="description">Kurzbeschreibung</label><textarea class="form-control row" rows="3" required="" id="description"></textarea></div>
+    
+                    <!-- Genre Auswahl -->
+                    <div class="mb-4">
+                        <label class="form-label">Genre</label>
+                        <div class="row g-2 align-items-center mb-2">
+                            <div class="col">
+                                <select class="form-select" id="genreSelect">
+                                    <option value="" selected>Genre auswählen</option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-danger btn-square px-3" id="addGenre" type="button">+</button>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="selectedGenres">
+                            <input type="hidden" id="genres" name="genres">
+                        </div>
                     </div>
-                    <div class="mb-3 row">
-                        <div class="col-6"><label class="form-label my-auto row" for="trailerUrl">Trailer URL (YouTube)</label><input class="form-control row" type="url" id="trailerUrl" required="" placeholder="https://www.youtube.com/watch?v=..."></div>
-                        <div class="col-6"><label class="form-label my-auto row" for="posterUrl">Poster URL</label><input class="form-control row" type="url" id="posterUrl" required="" placeholder="https://example.com/poster.jpg"></div>
+    
+                    <!-- Schauspieler Auswahl -->
+                    <div class="mb-4">
+                        <label class="form-label">Schauspieler</label>
+                        <div class="row g-2 align-items-center mb-2">
+                            <div class="col">
+                                <select class="form-select" id="actorInput">
+                                    <option value="" selected>Schauspieler auswählen</option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button class="btn btn-danger px-3" id="addActor" type="button">+</button>
+                            </div>
+                        </div>
+                        <div class="selected-items" id="selectedActors">
+                            <input type="hidden" id="actors" name="actors">
+                        </div>
                     </div>
-                    <div class="mb-3 row"><button class="btn btn-primary" type="submit">Filmkarte &amp; Modal zur Überprüfung generieren</button></div>
+    
+                    <!-- Beschreibung -->
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Kurzbeschreibung</label>
+                        <textarea class="form-control" id="description" rows="3" required></textarea>
+                    </div>
+    
+                    <!-- URLs -->
+                    <div class="mb-4 row g-3">
+                        <div class="col-md-6">
+                            <label for="trailerUrl" class="form-label">Trailer URL (YouTube)</label>
+                            <input type="url" class="form-control" id="trailerUrl"
+                                placeholder="https://www.youtube.com/watch?v=..." required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="posterUrl" class="form-label">Poster URL</label>
+                            <input type="url" class="form-control" id="posterUrl"
+                                placeholder="https://example.com/poster.jpg" required>
+                        </div>
+                    </div>
+    
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button class="btn btn-danger py-2" type="submit">Filmkarte & Modal zur Überprüfung
+                            generieren</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -99,7 +150,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script type="module" src="/scripts/addmovie.js"></script>
 </body>
 

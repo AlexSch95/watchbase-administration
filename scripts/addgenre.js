@@ -1,5 +1,12 @@
 import { showFeedback, logout } from './sharedFunctions.js';
 
+document.getElementById('genreForm').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+        event.preventDefault();
+        document.getElementById('addGenre').click()
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const genreSelect = document.getElementById('genreSelect');
     const addGenreBtn = document.getElementById('addGenre');

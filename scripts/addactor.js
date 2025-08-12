@@ -2,6 +2,13 @@ import { showFeedback, logout } from './sharedFunctions.js';
 
 document.getElementById('logout')?.addEventListener('click', logout);
 
+document.getElementById('actorForm').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+        event.preventDefault();
+        document.getElementById('addActor').click()
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const actorSelect = document.getElementById('actorSelect');
     const addActorBtn = document.getElementById('addActor');

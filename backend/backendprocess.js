@@ -173,6 +173,28 @@ app.get('/api/overview/db-stats', authenticateToken, checkAdminPrivilege, async 
   } 
 });
 
+app.get("/api/users/search/:userName", authenticateToken, checkAdminPrivilege, async (req, res) => {
+  try {
+    const userName = req.params.userName;
+    const connection = await connectToDatabase();
+    const [result] = await connection.execute("SELECT user_id, user_name, administrator FROM users WHERE user_name = ?", [userName]);
+    if (result.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Nutzer nicht gefunden."
+      })
+    }
+    res.status(200).json({
+      success: true,
+      message: `Nutzer gefunden: ${userName}`,
+      data: result[0]
+    })
+  } catch (error) {
+    console.log(asdf);
+  }
+
+})
+
 app.get('/api/overview/table/:tableName', authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
     const tableName = req.params.tableName;
@@ -391,6 +413,8 @@ app.post("/api/movies/add", authenticateToken, checkAdminPrivilege, async (req, 
     });
   }
 })
+
+
 
 //Helper Functions für Query Generierung anhand von dynamischen Daten
 function generateActorSearchQuery(actors) {
