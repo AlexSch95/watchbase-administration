@@ -9,9 +9,15 @@ async function initApp() {
 
 initApp();
 
+let currentDisplayedUser = 0;
+
 document.getElementById('logout')?.addEventListener('click', logout);
 
-let currentDisplayedUser = 0;
+document.getElementById('userSearch').addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+        document.getElementById('searchUserBtn').click()
+    }
+});
 
 document.getElementById("searchUserBtn").addEventListener("click", async () => {
     try {
@@ -29,43 +35,42 @@ document.getElementById("searchUserBtn").addEventListener("click", async () => {
             fillUserDisplay(result.data)
         }
     } catch (error) {
-        
+        showFeedback({success: false, message: "Verbindungsfehler..."})
     }
 })
 
-function fillUserDisplay(data) {
-    const userNameDisplay = document.getElementById("userUserNameSpan");
-    const userIdDisplay = document.getElementById("userIdSpan");
-    const userRoleDisplay = document.getElementById("userRoleSpan");
-    userNameDisplay.textContent = data.user_name;
-    userIdDisplay.textContent = data.user_id;
-    userRoleDisplay.textContent = data.administrator;
-}
-
-async function getUserWatchlist() {
-    //watchlist vom user holen
-}
-
-async function editUser() {}
-
-async function loadFullTable(tableName) {
+document.getElementById("getUserWatchlistBtn").addEventListener("click", async () => {
     try {
-        console.log(tableName);
         const token = localStorage.getItem("jwttoken");
-        const response = await fetch(`http://localhost:3000/api/overview/table/${tableName}`, {
+        const response = await fetch(`http://localhost:3000/api/users/watchlist/${currentDisplayedUser}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
             }
         });
         const result = await response.json();
         showFeedback(result);
-        fillTableModal(tableName, result.data)
+        if (result.success) { 
+            showFeedback(result);
+            generateTable(result.data);
+        }
     } catch (error) {
-        console.log("Fehler beim Laden der Tabelle", error);;
+        showFeedback({success: false, message: "Verbindungsfehler..."})
     }
+})
+
+function fillUserDisplay(data) {
+    const userInfoContainer = document.getElementById("generalUserInfoCard");
+    const userNameDisplay = document.getElementById("userUserNameSpan");
+    const userIdDisplay = document.getElementById("userIdSpan");
+    const userRoleDisplay = document.getElementById("userRoleSpan");
+    userNameDisplay.textContent = data.user_name;
+    userIdDisplay.textContent = data.user_id;
+    userRoleDisplay.textContent = data.administrator;
+    userInfoContainer.classList.add("show");
 }
 
 function generateTable(tableData) {
+    const fullCard = document.getElementById("userWatchlistCard");
     const tableContainer = document.getElementById("tableContent");
     tableContainer.innerHTML = "";
     const tableColumnNames = Object.keys(tableData[0]);
@@ -93,17 +98,6 @@ function generateTable(tableData) {
         })
         tableBody.appendChild(row);
     })
+    fullCard.classList.add("show")
 
-
-}
-
-const modal = new bootstrap.Modal(document.getElementById("modalUserMovies"));
-
-function fillTableModal(tableName, tableData) {
-    generateTable(tableData);
-    const tableNameDisplay = document.getElementById("modalTableName")
-    const rowCountDisplay = document.getElementById("modalRowCount")
-    rowCountDisplay.textContent = tableData.length;
-    tableNameDisplay.textContent = tableName;
-    modal.show();
 }

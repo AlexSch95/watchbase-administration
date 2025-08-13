@@ -24,6 +24,9 @@ const modal = new bootstrap.Modal(document.getElementById("movieModal"));
 document.getElementById("logout")?.addEventListener("click", logout);
 document.getElementById("addGenre").addEventListener("click", selectionHandler("genreSelect", selectedGenres, "selectedGenres", "genres"));
 document.getElementById("addActor").addEventListener("click", selectionHandler("actorInput", selectedActors, "selectedActors", "actors"));
+document.getElementById("selectedGenres").addEventListener("click", handleContainerClick);
+document.getElementById("selectedActors").addEventListener("click", handleContainerClick);
+
 
 function selectionHandler(selectId, array, storageKey, type) {
   return () => {
@@ -38,7 +41,6 @@ function selectionHandler(selectId, array, storageKey, type) {
   };
 }
 
-// Event Delegation für beide Container
 function handleContainerClick(e) {
   if (!e.target.classList.contains("remove-item")) return;
 
@@ -64,21 +66,12 @@ function handleContainerClick(e) {
   }
 }
 
-document
-  .getElementById("selectedGenres")
-  .addEventListener("click", handleContainerClick);
-document
-  .getElementById("selectedActors")
-  .addEventListener("click", handleContainerClick);
-
 // Aktualisierungsfunktion
 function updateSelectedItems(containerId, items, hiddenInputId) {
   const container = document.getElementById(containerId);
   const hiddenInput = document.getElementById(hiddenInputId);
 
-  container.innerHTML = items
-    .map(
-      (item, index) => `
+  container.innerHTML = items.map((item, index) => `
           <div class="selected-item d-inline-block w-auto text-nowrap">
               ${item}
               <span class="remove-item" data-index="${index}">&times;</span>
@@ -86,23 +79,24 @@ function updateSelectedItems(containerId, items, hiddenInputId) {
       `
     )
     .join("");
-
   hiddenInput.value = JSON.stringify(items);
 }
 
 async function getGenresAndActors() {
   try {
     const token = localStorage.getItem("jwttoken");
-    const responseGenres = await fetch(
-      "http://localhost:3000/api/genres/get-all",
+    const responseGenres = await fetch("http://localhost:3000/api/genres/get-all",
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`
+        },
       }
     );
-    const responseActors = await fetch(
-      "http://localhost:3000/api/actors/get-all",
+    const responseActors = await fetch("http://localhost:3000/api/actors/get-all",
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 
+          Authorization: `Bearer ${token}`
+        },
       }
     );
     if (!responseGenres.ok || !responseActors.ok) {
@@ -116,7 +110,8 @@ async function getGenresAndActors() {
     genres = genresFromApi.data;
     fillGenresAndActors(genres, actors);
   } catch (error) {
-    console.log("Genres und Schauspieler konnten nicht geladen werden", error);
+    console.error(error);
+    showFeedback({success: false, message: "Verbindungsfehler..."})
   }
 }
 
@@ -126,7 +121,6 @@ function fillGenresAndActors(genres, actors) {
     filterEntry.value = genre.genre_name;
     filterEntry.innerHTML = `${genre.genre_name}`;
     genreDropdown.appendChild(filterEntry);
-    // <option value="Drama">Drama</option>
   });
   actors.forEach((actor) => {
     const filterEntry = document.createElement("option");
@@ -163,18 +157,15 @@ function previewSubmittedMovie(submittedMovie) {
   const exampleCardContainer = document.getElementById("movieCardPreview");
   exampleCardContainer.innerHTML = "";
   const colCard = document.createElement("div");
-  colCard.className = "col-md-4 mb-4 mx-auto";
+  colCard.className = "col-md-4 mx-auto";
   colCard.innerHTML = `
-    <div class="card-movie-preview h-100" data-id="1">
-        <img src="${submittedMovie.poster}" class="card-img-top" alt="${
-    submittedMovie.title
-  }" />
-        <div class="card-body">
+    <div class="card h-75" data-id="1">
+        <img src="${submittedMovie.poster}" class="moviecard-img-top" alt="${submittedMovie.title}"/>
+        <div class="moviecard-body">
             <h5 class="movie-title">${submittedMovie.title}</h5>
             <p class="movie-meta">
-                <span class="rating">${generateStars(submittedMovie.rating)} ${
-    submittedMovie.rating
-  }</span> |
+                <span class="rating">${generateStars(submittedMovie.rating)} ${submittedMovie.rating}</span> 
+                |
                 <span class="year">${submittedMovie.release_year}</span>
             </p>
         </div>
@@ -207,7 +198,8 @@ async function addMovie(submittedMovie) {
       window.location.href = "./addmovie.html";
     },5000);
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
+    showFeedback({success: false, message: "Verbindungsfehler..."})
   }
 }
 

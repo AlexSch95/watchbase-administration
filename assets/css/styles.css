@@ -156,3 +156,30 @@
   border-radius: 20px;
 }
 
+.moviecard {
+    background-color: #222;
+    border: 1px solid #444;
+    transition: transform 0.3s;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+
+}
+
+.moviecard-img-top {
+    height: 800px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.btn-close {
+    filter: invert(1) brightness(2); /* Macht schwarz → weiß */
+    opacity: 1; /* Standardmäßig ist es etwas durchsichtig */
+}
+
+
+
+.moviecard:hover {
+    transform: scale(1.03);
+    cursor: pointer;
+}

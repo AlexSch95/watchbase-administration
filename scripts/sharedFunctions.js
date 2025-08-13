@@ -35,14 +35,18 @@ export async function checkAuth() {
     })
     const result = await response.json();
     if (!result.success) {
-      throw new Error("Authentifizierung Fehlgeschlagen. Sie werden zum Login weitergeleitet.")
+      showFeedback({success: false, message: error});
+      setTimeout(() => {
+      window.location.href = "./index.html";
+      }, 5000);
+      return false;
     }
     return true
   } catch (error) {
-    showFeedback({success: false, message: error});
+    console.error(error);
+    showFeedback({success: false, message: "Verbindungsfehler... Versuchen Sie es später erneut."})
     setTimeout(() => {
-    window.location.href = "./index.html";
+      window.location.href = "./index.html";
     }, 5000);
-    return false;
   }
 }

@@ -1,3 +1,4 @@
+// Importieren von geteilten funktionen
 import { showFeedback, logout, checkAuth } from './sharedFunctions.js';
 
 async function initApp() {
@@ -5,13 +6,22 @@ async function initApp() {
     if (!isAuthed) {
         return;
     }
-    getRowCounts();
 }
 
 initApp();
 
+// HTML Elemente definieren
+const actorSelect = document.getElementById('actorSelect');
+const addActorBtn = document.getElementById('addActor');
+const selectedActorsContainer = document.getElementById('selectedActors');
+
+//Lokales Array zur zwischenspeicherung der ausgewählten Schauspieler
+let actorsArray = [];
+
+//Logout Navbar-Item
 document.getElementById('logout')?.addEventListener('click', logout);
 
+//ermöglicht mit Enter bei der eingabe eines schauspielers die auswahl zu bestätigen (nur qol)
 document.getElementById('actorForm').addEventListener('keydown', function(event) {
     if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
         event.preventDefault();
@@ -19,92 +29,63 @@ document.getElementById('actorForm').addEventListener('keydown', function(event)
     }
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const actorSelect = document.getElementById('actorSelect');
-    const addActorBtn = document.getElementById('addActor');
-    const selectedActorsContainer = document.getElementById('selectedActors');
-    const hiddenActorsInput = document.getElementById('actors');
+// Schauspieler zum lokalen Array hinzufügen, das beim Abschicken ans Backend geschickt wird
+addActorBtn.addEventListener('click', function() {
+    const actor = actorSelect.value.trim();
     
-    let actorsArray = [];
-    
-    // Lade gespeicherte Actors falls vorhanden
-    if (hiddenActorsInput.value) {
-        actorsArray = JSON.parse(hiddenActorsInput.value);
+    if (actor && !actorsArray.includes(actor)) {
+        actorsArray.push(actor);
+        actorSelect.value = ''; // Input leeren
         updateSelectedActorsDisplay();
     }
-    
-    // Füge Actor hinzu
-    addActorBtn.addEventListener('click', function() {
-        const actor = actorSelect.value.trim();
-        
-        if (actor && !actorsArray.includes(actor)) {
-            actorsArray.push(actor);
-            actorSelect.value = ''; // Input leeren
-            updateSelectedActorsDisplay();
-            updateHiddenInput();
-        }
-    });
-    
-    // Enter-Taste unterstützen
-    actorSelect.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addActorBtn.click();
-        }
-    });
-    
-    // Aktualisiere die Anzeige der ausgewählten Actors
-    function updateSelectedActorsDisplay() {
-        selectedActorsContainer.innerHTML = '';
-        
-        actorsArray.forEach((actor, index) => {
-            const actorItem = document.createElement('div');
-            actorItem.className = 'selected-item d-inline-block w-auto text-nowrap';
-            
-            actorItem.innerHTML = `
-                ${actor}
-                <span class="remove-item" data-index="${index}">&times;</span>
-            `;
-            
-            selectedActorsContainer.appendChild(actorItem);
-        });
-        
-        // Füge Event-Listener für Löschen hinzu
-        document.querySelectorAll('.remove-item').forEach(span => {
-            span.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                actorsArray.splice(index, 1);
-                updateSelectedActorsDisplay();
-                updateHiddenInput();
-            });
-        });
-    }
-    
-    // Aktualisiere das versteckte Input-Feld
-    function updateHiddenInput() {
-        hiddenActorsInput.value = JSON.stringify(actorsArray);
-    }
-
-    document.getElementById('actorForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const submittedActors = {actors: actorsArray}
-        pushActors(submittedActors);
-    });
-
-    async function pushActors(actors) {
-        try {
-            const token = localStorage.getItem("jwttoken");
-            const response = await fetch('http://localhost:3000/api/actors/add', {
-                method: "POST",
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(actors)
-            });
-            const responseBody = await response.json();
-            showFeedback(responseBody);
-        } catch (error) {
-            console.error(error);
-        }
-    }
 });
+
+// Aktualisiere die Anzeige der ausgewählten Schauspieler (unter der Eingabezeile)
+function updateSelectedActorsDisplay() {
+    selectedActorsContainer.innerHTML = '';
+    actorsArray.forEach((actor, index) => {
+        const actorItem = document.createElement('div');
+        actorItem.className = 'selected-item d-inline-block w-auto text-nowrap';
+        
+        actorItem.innerHTML = `
+            ${actor}
+            <span class="remove-item" data-index="${index}">&times;</span>
+        `;
+        selectedActorsContainer.appendChild(actorItem);
+    });
+    
+    // Eventlistener für die ausgewählten Schauspieler zum löschen
+    document.querySelectorAll('.remove-item').forEach(span => {
+        span.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'));
+            actorsArray.splice(index, 1);
+            updateSelectedActorsDisplay();
+        });
+    });
+}
+
+document.getElementById('actorForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const submittedActors = actorsArray
+    pushActors(submittedActors);
+});
+
+async function pushActors(actors) {
+    try {
+        const token = localStorage.getItem("jwttoken");
+        const response = await fetch('http://localhost:3000/api/actors/add', {
+            method: "POST",
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(actors)
+        });
+        const responseBody = await response.json();
+        showFeedback(responseBody);
+    } catch (error) {
+        console.error(error);
+        showFeedback({success: false, message: "Verbindungsfehler..."})
+    }
+}
+

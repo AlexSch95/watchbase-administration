@@ -187,6 +187,57 @@ app.get('/api/overview/db-stats', authenticateToken, checkAdminPrivilege, async 
   } 
 });
 
+app.get("/api/users/watchlist/:userId", authenticateToken, checkAdminPrivilege, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const connection = await connectToDatabase();
+    const [result] = await connection.execute(`
+                    SELECT 
+                        m.movie_id,
+                        m.title,
+                        m.release_year,
+                        m.director,
+                        m.short_description,
+                        m.trailer_url,
+                        m.poster,
+                        m.rating,
+                        um.watched_status, 
+                        GROUP_CONCAT(DISTINCT g.genre_name SEPARATOR ', ') AS genres,
+                        GROUP_CONCAT(DISTINCT a.actor_name SEPARATOR ', ') AS actors
+                    FROM 
+                        user_movies um
+                    JOIN movies m ON um.movie_id = m.movie_id
+                    LEFT JOIN movies_with_genres mg ON m.movie_id = mg.movie_id
+                    LEFT JOIN genres g ON mg.genre_id = g.genre_id
+                    LEFT JOIN movies_with_actors ma ON m.movie_id = ma.movie_id
+                    LEFT JOIN actors a ON ma.actor_id = a.actor_id
+                    WHERE 
+                        um.user_id = ?
+                    GROUP BY 
+                        m.movie_id, m.title, m.release_year, m.director, m.short_description, 
+                        m.trailer_url, m.poster, m.rating, um.watched_status;
+                    `, [userId]); 
+    await connection.end()
+    if (result.length < 1) {
+      return res.status(404).json({
+        success: false,
+        message: "Der Nutzer hat keine Filme auf der Watchlist"
+      })
+    }
+    res.status(200).json({
+      success: true,
+      message: "Die Watchlist des Nutzers wurde geladen",
+      data: result
+    })
+  } catch (error) {
+    console.error('Fehler in Route "/api/users/watchlist/userId"', error);
+    res.status(500).json({
+      success: false,
+      message: 'Interner Serverfehler, Systemadministrator kontaktieren.',
+    });
+  }
+})
+
 app.get("/api/users/search/:userName", authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
     const userName = req.params.userName;
@@ -204,7 +255,7 @@ app.get("/api/users/search/:userName", authenticateToken, checkAdminPrivilege, a
       data: result[0]
     })
   } catch (error) {
-    console.log(asdf);
+    console.log("asdf");
   }
 
 })
@@ -246,7 +297,7 @@ app.get('/api/overview/table/:tableName', authenticateToken, checkAdminPrivilege
 //Route um Genres hinzuzufügen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
 app.post("/api/genres/add", authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
-    const {genres} = req.body;
+    const genres = req.body;
     //Wenn keine Genres oder die Genres nicht als Array übergeben wurden
     if (!genres || !Array.isArray(genres)) {
       return res.status(400).json({
@@ -270,13 +321,11 @@ app.post("/api/genres/add", authenticateToken, checkAdminPrivilege, async (req, 
       await connection.query("INSERT INTO genres (genre_name) VALUES ?", [genreValues]);
     }
     await connection.end();
-    //Modulare Rückmeldung, wenn newGenres mehr als 1 werden die Genres die hinzugefügt wurden in der message übermittelt, ansonsten
-    // dass bereits alle existieren
     res.status(201).json({
       success: true,
       message: newGenres.length > 0 
-      ? `Neue Genres hinzugefügt: ${newGenres.join(", ")}, Nicht hinzugefügt weil bereits existent: ${existingNames.join(", ")}.` 
-      : "Alle Genres existieren bereits"
+                ? `Neue Genres wurden hinzugefügt: ${newGenres.join(", ")}` 
+                : "Alle Genres sind bereits vorhanden."
     });
   } catch (error) {
     console.error('Fehler in Route "/api/genres/add"', error);
@@ -290,8 +339,7 @@ app.post("/api/genres/add", authenticateToken, checkAdminPrivilege, async (req, 
 //Route um Schauspieler hinzuzufügen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
 app.post("/api/actors/add", authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
-    const {actors} = req.body;
-
+    const actors = req.body;
     if (!actors || !Array.isArray(actors)) {
       return res.status(400).json({
         success: false, 
@@ -311,8 +359,8 @@ app.post("/api/actors/add", authenticateToken, checkAdminPrivilege, async (req, 
     res.status(201).json({
       success: true,
       message: newActors.length > 0 
-      ? `Neue Schauspieler hinzugefügt: ${newActors.join(", ")}, Nicht hinzugefügt weil bereits existent: ${existingNames.join(", ")}.` 
-      : "Alle Schauspieler existieren bereits"
+                ? `Neue Schauspieler wurden hinzugefügt: ${newActors.join(", ")}` 
+                : "Alle Schauspieler sind bereits vorhanden."
     });
   } catch (error) {
     console.error('Fehler in Route "/api/actors/add"', error);
