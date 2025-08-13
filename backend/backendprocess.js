@@ -45,7 +45,7 @@ function authenticateToken(req, res, next) {
     }
     res.status(500).json({
       success: false, 
-      message: "Interner Severfehler, Systemadministrator kontaktieren."
+      message: "Ungültiger oder abgelaufener Token wurde übermittelt."
     })
   }
 }
@@ -67,10 +67,24 @@ async function checkAdminPrivilege(req, res, next) {
     console.error(`Fehler in Middleware "checkAdminPrivilege": ${error}`);
     res.status(500).json({
       success: false, 
-      message: "Interner Severfehler, Systemadministrator kontaktieren."
+      message: "Benutzer hat keine Administratorberechtigung."
     })
   }
 }
+
+app.get("/api/check-auth", authenticateToken, checkAdminPrivilege, (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message: "Token Verifizierung erfolgreich"
+    })
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Token Verifizierung fehlgeschlagen"
+    })
+  }
+})
 
 //Login-Route - Anmeldung im Adminsystem nur mit entsprechender Administratorrolle möglich
 app.post("/api/admin/login", async (req, res) => {

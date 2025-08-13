@@ -1,6 +1,17 @@
-import { showFeedback, logout } from './sharedFunctions.js';
+import { showFeedback, logout, checkAuth } from './sharedFunctions.js';
 let rowCounts = [];
-getRowCounts();
+
+
+async function initApp() {
+    const isAuthed = await checkAuth();
+    if (!isAuthed) {
+        return;
+    }
+    getRowCounts();
+}
+
+initApp();
+
 
 document.getElementById('logout')?.addEventListener('click', logout);
 
@@ -13,14 +24,15 @@ async function getRowCounts () {
             }
         });
         const rowCountFromApi = await response.json();
-        rowCounts = rowCountFromApi.data;
-        showFeedback(rowCountFromApi);
+        if (rowCountFromApi) {
+            rowCounts = rowCountFromApi.data;
+            showFeedback(rowCountFromApi);
+            renderTableCards();
+            combinedCalculation();
+            tablesChart();
+        }
     } catch (error) {
-        console.log("Fehler beim Laden", error);;
-    } finally {
-        renderTableCards();
-        combinedCalculation();
-        tablesChart();
+        console.log("Fehler beim Laden", error);
     }
 }
 

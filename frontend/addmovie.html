@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Admin: Add Movie</title>
+    <title>Watchbase-Admin: Film anlegen</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:200,300,400,500,600,700,800&amp;display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit:200,300,400,500,600,700,800,900&amp;display=swap">
@@ -20,6 +20,7 @@
                     <li class="nav-item"><a class="nav-link btn btn-outline-danger active" href="./addmovie.html">Film hinzufügen</a></li>
                     <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addgenre.html">Genre hinzufügen</a></li>
                     <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addactor.html">Schauspieler hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./inspect-user.html">Userverwaltung</a></li>
                     <li class="nav-item"><a class="nav-link btn btn-outline-danger" id="logout">Logout</a></li>
 
                 </ul>
@@ -27,6 +28,9 @@
         </div>
     </nav>
     <div class="container">
+        <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
+            <span id="errorText"></span>
+        </div>
         <div id="newMovie" class="row justify-content-center"> <!-- Korrektur: justify-content-center -->
             <div class="mt-5 col-md-8">
                 <form id="movieForm" class="needs-validation" novalidate>
@@ -123,9 +127,6 @@
     </div>
     <div class="container py-5">
         <div class="row" id="movieCardPreview"></div>
-        <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
-            <span id="errorText"></span>
-        </div>
     </div>
     </div>
 

@@ -1,4 +1,15 @@
-import { showFeedback, logout } from './sharedFunctions.js';
+import { showFeedback, logout, checkAuth } from './sharedFunctions.js';
+
+async function initApp() {
+    const isAuthed = await checkAuth();
+    if (!isAuthed) {
+        return;
+    }
+}
+
+initApp();
+
+document.getElementById('logout')?.addEventListener('click', logout);
 
 let currentDisplayedUser = 0;
 
@@ -36,8 +47,6 @@ async function getUserWatchlist() {
 }
 
 async function editUser() {}
-
-document.getElementById('logout')?.addEventListener('click', logout);
 
 async function loadFullTable(tableName) {
     try {

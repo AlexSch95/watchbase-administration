@@ -1,4 +1,16 @@
-import { showFeedback, logout } from './sharedFunctions.js';
+import { showFeedback, logout, checkAuth } from './sharedFunctions.js';
+
+async function initApp() {
+    const isAuthed = await checkAuth();
+    if (!isAuthed) {
+        return;
+    }
+    getRowCounts();
+}
+
+initApp();
+
+document.getElementById('logout')?.addEventListener('click', logout);
 
 document.getElementById('genreForm').addEventListener('keydown', function(event) {
     if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
