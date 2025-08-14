@@ -1,8 +1,8 @@
--- CREATE DATABASE watchbase;
--- CREATE USER 'watchbase_user'@'localhost' IDENTIFIED BY 'bla1234';
--- GRANT ALL PRIVILEGES ON watchbase.* TO 'watchbase_user'@'localhost';
--- FLUSH PRIVILEGES;
--- USE watchbase;
+CREATE DATABASE watchbase;
+CREATE USER 'watchbase_user'@'localhost' IDENTIFIED BY 'bla1234';
+GRANT ALL PRIVILEGES ON watchbase.* TO 'watchbase_user'@'localhost';
+FLUSH PRIVILEGES;
+USE watchbase;
 
 -- Tabelle Filme erstellen
 CREATE TABLE movies (
