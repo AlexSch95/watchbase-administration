@@ -8,10 +8,15 @@
 
 ## Inhaltsverzeichnis
 
+- [Kurzbeschreibung](#kurzbeschreibung)
 - [Tech-Stack](#tech-stack)
 - [Entwicklungsstatus](#entwicklungsstatus)
 - [Einrichtung](#einrichtung)
 - [Projektstruktur](#projektstruktur)
+
+## Kurzbeschreibung
+
+Dieses Repository beinhaltet ein Administrationstool für Watchbase, eine Webapp die Funktionalitäten bietet um sich eine personalisierte Watchlist zu erstellen und zu verwalten. Das Administrationstool bietet vollumfängliche Funktionalität um die von Watchbase verarbeiteten Daten zu verwalten und zu ergänzen.
 
 ## Tech-Stack
 
