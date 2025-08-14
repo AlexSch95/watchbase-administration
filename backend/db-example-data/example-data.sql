@@ -2,14 +2,19 @@
 INSERT INTO genres (genre_name) VALUES 
 ('Action'), ('Adventure'), ('Sci-Fi'), ('Drama'), ('Crime'), 
 ('Thriller'), ('Fantasy'), ('Comedy'), ('Horror'), ('Animation'), 
-('Romance'), ('Mystery'), ('Biography'), ('History'), ('War');
+('Romance'), ('Mystery'), ('Biography'), ('History'), ('War'),
+('Musical'), ('Western'), ('Film-Noir'), ('Family'), ('Sport');
 
 -- Schauspieler einfügen
 INSERT INTO actors (actor_name) VALUES
 ('Tom Hanks'), ('Leonardo DiCaprio'), ('Christian Bale'), ('Heath Ledger'), ('Robert Downey Jr.'),
 ('Scarlett Johansson'), ('Morgan Freeman'), ('Brad Pitt'), ('Edward Norton'), ('Keanu Reeves'),
 ('Hugh Jackman'), ('Joaquin Phoenix'), ('Matt Damon'), ('Al Pacino'), ('Meryl Streep'),
-('Anne Hathaway'), ('Emma Watson'), ('Daniel Radcliffe'), ('Rupert Grint'), ('Gary Oldman');
+('Anne Hathaway'), ('Emma Watson'), ('Daniel Radcliffe'), ('Rupert Grint'), ('Gary Oldman'),
+('Timothée Chalamet'), ('Zendaya'), ('Florence Pugh'), ('Austin Butler'), ('Ana de Armas'),
+('Tom Hardy'), ('Cillian Murphy'), ('Margot Robbie'), ('Ryan Gosling'), ('Lady Gaga'),
+('Adam Driver'), ('Jodie Comer'), ('Rami Malek'), ('John David Washington'), ('Lakeith Stanfield'),
+('Daniel Kaluuya'), ('Steven Yeun'), ('Frances McDormand'), ('Anthony Hopkins'), ('Chadwick Boseman');
 
 -- Filme einfügen
 INSERT INTO movies (title, release_year, director, short_description, trailer_url, poster, rating) VALUES
@@ -32,7 +37,27 @@ INSERT INTO movies (title, release_year, director, short_description, trailer_ur
 ('La La Land', 2016, 'Damien Chazelle', 'While navigating their careers in Los Angeles, a pianist and an actress fall in love while attempting to reconcile their aspirations for the future.', 'https://www.youtube.com/watch?v=0pdqf4P9MB8', 'https://m.media-amazon.com/images/M/MV5BMzUzNDM2NzM2MV5BMl5BanBnXkFtZTgwNTM3NTg4OTE@._V1_.jpg', 8.0),
 ('Black Panther', 2018, 'Ryan Coogler', 'T''Challa, heir to the hidden but advanced kingdom of Wakanda, must step forward to lead his people into a new future and must confront a challenger from his country''s past.', 'https://www.youtube.com/watch?v=xjDjIWPwcPU', 'https://m.media-amazon.com/images/M/MV5BMTg1MTY2MjYzNV5BMl5BanBnXkFtZTgwMTc4NTMwNDI@._V1_.jpg', 7.3),
 ('Dune', 2021, 'Denis Villeneuve', 'Feature adaptation of Frank Herbert''s science fiction novel about the son of a noble family entrusted with the protection of the most valuable asset and most vital element in the galaxy.', 'https://www.youtube.com/watch?v=n9xhJrPXop4', 'https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg', 8.0),
-('Everything Everywhere All at Once', 2022, 'Daniel Kwan, Daniel Scheinert', 'A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence by exploring other universes connecting with the lives she could have led.', 'https://www.youtube.com/watch?v=wxN1T1uxQ2g', 'https://m.media-amazon.com/images/M/MV5BYTdiOTIyZTQtNmQ1OS00NjZlLWIyMTgtYzk5Y2M3ZDVmMDk1XkEyXkFqcGdeQXVyMTAzMDg4NzU0._V1_.jpg', 8.1);
+('Everything Everywhere All at Once', 2022, 'Daniel Kwan, Daniel Scheinert', 'A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence by exploring other universes connecting with the lives she could have led.', 'https://www.youtube.com/watch?v=wxN1T1uxQ2g', 'https://m.media-amazon.com/images/M/MV5BYTdiOTIyZTQtNmQ1OS00NjZlLWIyMTgtYzk5Y2M3ZDVmMDk1XkEyXkFqcGdeQXVyMTAzMDg4NzU0._V1_.jpg', 8.1),
+('No Country for Old Men', 2007, 'Coen Brothers', 'Violence and mayhem ensue after a hunter stumbles upon a drug deal gone wrong and more than two million dollars in cash near the Rio Grande.', 'https://www.youtube.com/watch?v=38A__WT3-o0', 'https://m.media-amazon.com/images/M/MV5BMjA5Njk3MjM4OV5BMl5BanBnXkFtZTcwMTc5MTE1MQ@@._V1_.jpg', 8.1),
+('The Grand Budapest Hotel', 2014, 'Wes Anderson', 'A writer encounters the owner of an aging high-class hotel, who tells him of his early years serving as a lobby boy in the hotel\'s glorious years under an exceptional concierge.', 'https://www.youtube.com/watch?v=1Fg5iWmQjwk', 'https://m.media-amazon.com/images/M/MV5BMzM5NjUxOTEyMl5BMl5BanBnXkFtZTgwNjEyMDM0MDE@._V1_.jpg', 8.1),
+('Whiplash', 2014, 'Damien Chazelle', 'A promising young drummer enrolls at a cut-throat music conservatory where his dreams of greatness are mentored by an instructor who will stop at nothing to realize a student\'s potential.', 'https://www.youtube.com/watch?v=7d_jQycdQGo', 'https://m.media-amazon.com/images/M/MV5BOTA5NDZlZGUtMjAxOS00YTRkLTkwYmMtYWQ0NWEwNDZiZTIxXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg', 8.5),
+('Mad Max: Fury Road', 2015, 'George Miller', 'In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland with the aid of a group of female prisoners, a psychotic worshiper, and a drifter named Max.', 'https://www.youtube.com/watch?v=hEJnMQG9ev8', 'https://m.media-amazon.com/images/M/MV5BN2EwM2I5OWMtMGQyMi00Zjg1LWJkNTctZTdjYTA4OGUwZjMyXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg', 8.1),
+('The Revenant', 2015, 'Alejandro G. Iñárritu', 'A frontiersman on a fur trading expedition in the 1820s fights for survival after being mauled by a bear and left for dead by members of his own hunting team.', 'https://www.youtube.com/watch?v=LoebZZ8K5N0', 'https://m.media-amazon.com/images/M/MV5BMDE5OWMzM2QtOTU2ZS00NzAyLWI2MDEtOTRlYjIxZGM0OWRjXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg', 8.0),
+('Arrival', 2016, 'Denis Villeneuve', 'A linguist works with the military to communicate with alien lifeforms after twelve mysterious spacecraft appear around the world.', 'https://www.youtube.com/watch?v=tFMo3UJ4B4g', 'https://m.media-amazon.com/images/M/MV5BMTExMzU0ODcxNDheQTJeQWpwZ15BbWU4MDE1OTI4MzAy._V1_.jpg', 7.9),
+('Get Out', 2017, 'Jordan Peele', 'A young African-American visits his white girlfriends parents for the weekend, where his simmering uneasiness about their reception of him eventually reaches a boiling point.', 'https://www.youtube.com/watch?v=DzfpyUB60YY', 'https://m.media-amazon.com/images/M/MV5BMjUxMDQwNjcyNl5BMl5BanBnXkFtZTgwNzcwMzc0MTI@._V1_.jpg', 7.7),
+('Joker', 2019, 'Todd Phillips', 'In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime.', 'https://www.youtube.com/watch?v=zAGVQLHvwOY', 'https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg', 8.4),
+('Knives Out', 2019, 'Rian Johnson', 'A detective investigates the death of a patriarch of an eccentric, combative family.', 'https://www.youtube.com/watch?v=qGqiHJTsRkQ', 'https://m.media-amazon.com/images/M/MV5BMGUwZjliMTAtNzAxZi00MWNiLWE2NzgtZGUxMGQxZjhhNDRiXkEyXkFqcGdeQXVyNjU1NzU4MzE@._V1_.jpg', 7.9),
+('1917', 2019, 'Sam Mendes', 'April 6th, 1917. As a regiment assembles to wage war deep in enemy territory, two soldiers are assigned to race against time and deliver a message that will stop 1,600 men from walking straight into a deadly trap.', 'https://www.youtube.com/watch?v=YqNYrYUiMfg', 'https://m.media-amazon.com/images/M/MV5BOTdmNTFjNDEtNzg0My00ZjkxLTg1ZDAtZTdkMDc2ZmFiNWQ1XkEyXkFqcGdeQXVyNTAzNzgwNTg@._V1_.jpg', 8.2),
+('Nomadland', 2020, 'Chloé Zhao', 'A woman in her sixties embarks on a journey through the American West after losing everything during the recession.', 'https://www.youtube.com/watch?v=6sxCFZ8_d84', 'https://m.media-amazon.com/images/M/MV5BMDRiZWUxNmItNDU5Yy00ODNmLTk0M2ItZjQzZTA5OTJkZjkyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg', 7.3),
+('The Father', 2020, 'Florian Zeller', 'A man refuses all assistance from his daughter as he ages and starts to doubt his loved ones, his own mind and even the fabric of his reality.', 'https://www.youtube.com/watch?v=4TZb7YfK-JI', 'https://m.media-amazon.com/images/M/MV5BZGJhNWRiOWQtMjI4OS00ZjcxLTgwMTAtMzQ2ODkxY2JkOTVlXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg', 8.2),
+('Dune: Part Two', 2024, 'Denis Villeneuve', 'Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family.', 'https://www.youtube.com/watch?v=U2Qp5pL3ovA', 'https://m.media-amazon.com/images/M/MV5BZTczY2M2NzItNDBlMi00MGM5LTg1NDAtODlhM2YxYjI1OTVlXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg', 8.7),
+('Oppenheimer', 2023, 'Christopher Nolan', 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.', 'https://www.youtube.com/watch?v=uYPbbksJxIg', 'https://m.media-amazon.com/images/M/MV5BMDBmYTZjNjUtN2M1MS00MTQ2LTk2ODgtNzc2M2QyZGE5NTVjXkEyXkFqcGdeQXVyNzAwMjU2MTY@._V1_.jpg', 8.5),
+('The Batman', 2022, 'Matt Reeves', 'When a sadistic serial killer begins murdering key political figures in Gotham, Batman is forced to investigate the city\'s hidden corruption.', 'https://www.youtube.com/watch?v=mqqft2x_Aa4', 'https://m.media-amazon.com/images/M/MV5BMDdmMTBiNTYtMDIzNi00NGVlLWIzMDYtZTk3MTQ3NGQxZGEwXkEyXkFqcGdeQXVyMzMwOTU5MDk@._V1_.jpg', 7.8),
+('Top Gun: Maverick', 2022, 'Joseph Kosinski', 'After thirty years, Maverick is still pushing the envelope as a top naval aviator, but must confront ghosts of his past when he leads TOP GUN\'s elite graduates.', 'https://www.youtube.com/watch?v=giXco2jaZ_4', 'https://m.media-amazon.com/images/M/MV5BZWYzOGEwNTgtNWU3NS00ZTQ0LWJkODUtMmVhMjIwMjA1ZmQwXkEyXkFqcGdeQXVyMjkwOTAyMDU@._V1_.jpg', 8.3),
+('Everything Everywhere All at Once', 2022, 'Daniel Kwan, Daniel Scheinert', 'A middle-aged Chinese immigrant is swept up into an insane adventure in which she alone can save existence by exploring other universes.', 'https://www.youtube.com/watch?v=wxN1T1uxQ2g', 'https://m.media-amazon.com/images/M/MV5BYTdiOTIyZTQtNmQ1OS00NjZlLWIyMTgtYzk5Y2M3ZDVmMDk1XkEyXkFqcGdeQXVyMTAzMDg4NzU0._V1_.jpg', 8.1),
+('Barbie', 2023, 'Greta Gerwig', 'Barbie suffers a crisis that leads her to question her world and her existence.', 'https://www.youtube.com/watch?v=pBk4NYhWNMM', 'https://m.media-amazon.com/images/M/MV5BNjU3N2QxNzYtMjk1NC00MTc4LTk1NTQtMmUxNTljM2I0NDA5XkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_.jpg', 6.9),
+('Killers of the Flower Moon', 2023, 'Martin Scorsese', 'When oil is discovered in 1920s Oklahoma under Osage Nation land, the Osage people are murdered one by one.', 'https://www.youtube.com/watch?v=EP34Yoxs3FQ', 'https://m.media-amazon.com/images/M/MV5BZTZlMjUxNGQtYTA4MC00ZjlkLWI3YWEtYzQ0YTAwYjRmYzJjXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg', 7.7),
+('Poor Things', 2023, 'Yorgos Lanthimos', 'The incredible tale of the fantastical evolution of Bella Baxter, a young woman brought back to life by the brilliant and unorthodox scientist Dr. Godwin Baxter.', 'https://www.youtube.com/watch?v=RlbR5N6veqw', 'https://m.media-amazon.com/images/M/MV5BNGIyYWMzNjktNDE3MC00YWQyLWEyMmEtOTUwNDM5YjJmYThjXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg', 8.4);
 
 -- Genre-Zuordnungen
 INSERT INTO movies_with_genres (movie_id, genre_id) VALUES
@@ -55,7 +80,27 @@ INSERT INTO movies_with_genres (movie_id, genre_id) VALUES
 (17, 4), (17, 8), (17, 12), -- La La Land: Drama, Comedy, Romance
 (18, 1), (18, 2), (18, 3),  -- Black Panther: Action, Adventure, Sci-Fi
 (19, 2), (19, 3), (19, 7),  -- Dune: Adventure, Sci-Fi, Fantasy
-(20, 1), (20, 3), (20, 7);  -- Everything Everywhere: Action, Sci-Fi, Fantasy
+(20, 1), (20, 3), (20, 7),  -- Everything Everywhere: Action, Sci-Fi, Fantasy
+(21, 5), (21, 6), (21, 4),    -- No Country: Crime, Thriller, Drama
+(22, 8), (22, 4), (22, 12),   -- Grand Budapest: Comedy, Drama, Mystery
+(23, 4), (23, 15),            -- Whiplash: Drama, Music
+(24, 1), (24, 2), (24, 3),    -- Mad Max: Action, Adventure, Sci-Fi
+(25, 2), (25, 4), (25, 14),   -- Revenant: Adventure, Drama, History
+(26, 3), (26, 4), (26, 12),   -- Arrival: Sci-Fi, Drama, Mystery
+(27, 6), (27, 9), (27, 12),   -- Get Out: Thriller, Horror, Mystery
+(28, 4), (28, 5), (28, 6),    -- Joker: Drama, Crime, Thriller
+(29, 5), (29, 6), (29, 8),    -- Knives Out: Crime, Thriller, Comedy
+(30, 1), (30, 4), (30, 14),   -- 1917: Action, Drama, War
+(31, 4),                       -- Nomadland: Drama
+(32, 4), (32, 12),             -- The Father: Drama, Mystery
+(33, 2), (33, 3), (33, 7),    -- Dune 2: Adventure, Sci-Fi, Fantasy
+(34, 4), (34, 13), (34, 14),  -- Oppenheimer: Drama, Biography, History
+(35, 1), (35, 5), (35, 6),    -- The Batman: Action, Crime, Thriller
+(36, 1), (36, 2), (36, 4),    -- Top Gun: Action, Adventure, Drama
+(37, 1), (37, 3), (37, 7),    -- Everything Everywhere: Action, Sci-Fi, Fantasy
+(38, 2), (38, 8), (38, 11),   -- Barbie: Adventure, Comedy, Romance
+(39, 4), (39, 5), (39, 14),   -- Killers: Drama, Crime, History
+(40, 4), (40, 7), (40, 11);   -- Poor Things: Drama, Fantasy, Romance
 
 -- Schauspieler-Zuordnungen
 INSERT INTO movies_with_actors (movie_id, actor_id) VALUES
@@ -78,7 +123,27 @@ INSERT INTO movies_with_actors (movie_id, actor_id) VALUES
 (17, 5), (17, 16),         -- La La Land: Gosling, Stone
 (18, 6), (18, 20),         -- Black Panther: Boseman, Jordan
 (19, 2), (19, 6),          -- Dune: Chalamet, Zendaya
-(20, 5), (20, 16);         -- Everything Everywhere: Yeoh, Curtis
+(20, 5), (20, 16),         -- Everything Everywhere: Yeoh, Curtis
+(21, 8), (21, 20),             -- No Country: Brolin, Bardem
+(22, 18), (22, 19),            -- Grand Budapest: Norton, Fiennes
+(23, 16), (23, 17),            -- Whiplash: Teller, Simmons
+(24, 6), (24, 8),              -- Mad Max: Theron, Hardy
+(25, 2), (25, 8),              -- Revenant: DiCaprio, Hardy
+(26, 14), (26, 15),            -- Arrival: Adams, Renner
+(27, 16), (27, 17),            -- Get Out: Kaluuya, Williams
+(28, 12), (28, 13),            -- Joker: Phoenix, De Niro
+(29, 5), (29, 14), (29, 18),   -- Knives Out: Craig, Evans, Curtis
+(30, 21), (30, 22),            -- 1917: Chapman, MacKay
+(31, 23),                       -- Nomadland: McDormand
+(32, 19), (32, 24),             -- The Father: Hopkins, Colman
+(33, 25), (33, 26),             -- Dune 2: Chalamet, Zendaya
+(34, 3), (34, 7), (34, 27),     -- Oppenheimer: Murphy, Damon, Blunt
+(35, 28), (35, 29),             -- The Batman: Pattinson, Kravitz
+(36, 5), (36, 30),              -- Top Gun: Cruise, Teller
+(37, 31), (37, 32),             -- Everything Everywhere: Yeoh, Quan
+(38, 33), (38, 34),             -- Barbie: Robbie, Gosling
+(39, 2), (39, 8), (39, 35),     -- Killers: DiCaprio, De Niro, Gladstone
+(40, 33), (40, 36), (40, 37);   -- Poor Things: Stone, Ruffalo, Dafoe
 
 
 INSERT INTO users (user_id, user_name, password_hash, administrator) VALUES
