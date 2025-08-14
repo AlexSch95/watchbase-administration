@@ -42,6 +42,13 @@ CREATE TABLE movies_with_actors (
     FOREIGN KEY (actor_id) REFERENCES actors(actor_id)
 );
 
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    administrator BOOLEAN DEFAULT 0
+);
+
 CREATE TABLE user_movies (
     watchlist_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,

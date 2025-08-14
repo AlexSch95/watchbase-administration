@@ -85,8 +85,12 @@ INSERT INTO movies_with_actors (relation_id, movie_id, actor_id) VALUES
 (19, 10, 5), -- DiCaprio in Interstellar (fiktiv)
 (20, 10, 12); -- Gosling in Interstellar (fiktiv)
 
+INSERT INTO users (user_id, user_name, password_hash, administrator)
+(1, 'admin', '$2b$10$RMNdw7PdvdnDvnzEUUUp0O8D2oUSzfqdz9ArNLFDks0c.9nVHiuHO', 1)
+
+
 -- 7. User Watchlists
 INSERT INTO user_movies (watchlist_id, user_id, movie_id, watched_status) VALUES
-(1, 2, 1, TRUE),
-(2, 2, 2, TRUE),
-(3, 2, 4, FALSE);
+(1, 1, 1, TRUE),
+(2, 1, 2, TRUE),
+(3, 1, 4, FALSE);
