@@ -84,6 +84,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">Löschen bestätigen</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">Bist du dir sicher dass du diese Zeile löschen möchtest?</p>
+                <p class="mb-0">Dieser Eintrag wird gelöscht:</p>
+                <p class="mb-0">Tabelle: <span id="deleteTableNameSpan"></span>, ID: <span id="deleteIdSpan"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Löschen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 

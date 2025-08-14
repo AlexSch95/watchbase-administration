@@ -12,6 +12,8 @@ async function initApp() {
 initApp();
 
 document.getElementById("logout")?.addEventListener("click", logout);
+const tableModal = new bootstrap.Modal(document.getElementById("modalTableInfo"));
+const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"))
 
 async function getRowCounts() {
   try {
@@ -190,7 +192,7 @@ async function loadFullTable(tableName) {
   }
 }
 
-function generateTable(tableData) {
+function generateTable(tableData, tableName) {
   const tableContainer = document.getElementById("tableContent");
   tableContainer.innerHTML = "";
   const tableColumnNames = Object.keys(tableData[0]);
@@ -203,7 +205,6 @@ function generateTable(tableData) {
     tableHeaderElement.textContent = columnName;
     tableHeaderRow.appendChild(tableHeaderElement);
   });
-
   tableHeader.appendChild(tableHeaderRow);
   tableContainer.appendChild(tableHeader);
 
@@ -220,13 +221,13 @@ function generateTable(tableData) {
   });
 }
 
-const modal = new bootstrap.Modal(document.getElementById("modalTableInfo"));
 
 function fillTableModal(tableName, tableData) {
-  generateTable(tableData);
+  generateTable(tableData, tableName);
   const tableNameDisplay = document.getElementById("modalTableName");
   const rowCountDisplay = document.getElementById("modalRowCount");
   rowCountDisplay.textContent = tableData.length;
   tableNameDisplay.textContent = tableName;
-  modal.show();
+  tableModal.show();
 }
+

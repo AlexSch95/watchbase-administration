@@ -15,6 +15,16 @@ app.use(morgan("dev"));
 
 const secretKey = process.env.JWT_SECRET
 
+const tables = [
+  'actors', 
+  'genres', 
+  'movies', 
+  'movies_with_actors', 
+  'movies_with_genres', 
+  'user_movies', 
+  'users'
+];
+
 //Middleware: JWT Token verify
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
@@ -151,15 +161,6 @@ app.post("/api/admin/login", async (req, res) => {
 //Route um Statistiken über die Datenbank abzurufen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
 app.get('/api/overview/db-stats', authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
-    const tables = [
-      'actors', 
-      'genres', 
-      'movies', 
-      'movies_with_actors', 
-      'movies_with_genres', 
-      'user_movies', 
-      'users'
-    ];
     // Erstellt ein Array von COUNT(*) Queries mit Tabellennamen
     const connection = await connectToDatabase();
     const queries = tables.map(table => 
@@ -257,22 +258,12 @@ app.get("/api/users/search/:userName", authenticateToken, checkAdminPrivilege, a
   } catch (error) {
     console.log("asdf");
   }
-
 })
 
 app.get('/api/overview/table/:tableName', authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
     const tableName = req.params.tableName;
-    const allowedTables = [
-      'actors', 
-      'genres', 
-      'movies', 
-      'movies_with_actors', 
-      'movies_with_genres', 
-      'user_movies', 
-      'users'
-    ];
-    if (allowedTables.includes(tableName) === false) {
+    if (tables.includes(tableName) === false) {
       return res.status(400).json({
         success: false,
         message: "Der Tabellenname ist nicht erlaubt"
