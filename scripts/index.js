@@ -16,7 +16,6 @@ document.getElementById("loginForm").addEventListener("submit", async function (
       }),
     });
     const responseBody = await response.json();
-    console.log(responseBody);
     localStorage.setItem("jwttoken", responseBody.token);
     showFeedback(responseBody);
     if (responseBody.success === true) {
