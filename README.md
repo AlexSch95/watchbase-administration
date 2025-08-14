@@ -9,19 +9,16 @@
 ## Inhaltsverzeichnis
 
 - [Tech-Stack](#tech-stack)
-- [Entwicklungsstatus](#status)
+- [Entwicklungsstatus](#entwicklungsstatus)
 - [Einrichtung](#einrichtung)
 - [Projektstruktur](#projektstruktur)
 
 ## Tech-Stack
 
-![image](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white) ![image](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white) ![image](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E) ![image](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white) ![image](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![image](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white) ![image](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
+![image](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white) ![image](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white) ![image](https://img.shields.io/badge/JavaScript-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E) ![image](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)  ![image](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white) ![image](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white) ![image](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
 
-## Status
- Aktueller Entwicklungsstand des Admintools
-<div style="width: 400px; background: #f0f0f0; border-radius: 5px;">
-<div style="width: 85%; background: #4CAF50; color: white; text-align: center; border-radius: 5px; padding: 5px;">85%</div>
-</div>
+## Entwicklungsstatus
+Fortschritt: 🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩🟥🟥🟥 (85%)
 
 ## Einrichtung
 
@@ -40,7 +37,7 @@
 
 ## Projektstruktur
 
-```text
+```
 Projektverzeichnis/
 ├── frontend/
 │   ├── index.html
