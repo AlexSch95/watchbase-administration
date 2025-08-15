@@ -17,7 +17,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     }
 
     // 2FA aktiv - Code abfragen
-    const enteredCode = prompt("Gib deinen 2-Faktor-Authentifizierungscode ein");
+    const enteredCode = await show2FAModal();
     
     // Nutzer hat abgebrochen
     if (enteredCode === null) {
@@ -44,7 +44,60 @@ document.getElementById("loginForm").addEventListener("submit", async function (
   }
 });
 
+
+
 // Hilfsfunktionen
+function show2FAModal() {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('twoFAModal');
+        const input = document.getElementById('twoFACodeInput');
+        const submitBtn = document.getElementById('twoFASubmitBtn');
+        const cancelBtn = document.getElementById('twoFACancelBtn');
+        
+        // Modal anzeigen
+        modal.style.display = 'block';
+        input.focus();
+        
+        // Event-Handler
+        const handleSubmit = () => {
+            cleanup();
+            resolve(input.value);
+        };
+        
+        const handleCancel = () => {
+            cleanup();
+            resolve(null);
+        };
+        
+        const handleKeyPress = (e) => {
+            if (e.key === 'Enter') {
+                handleSubmit();
+            }
+        };
+        
+        const handleClickOutside = (e) => {
+            if (e.target === modal) {
+                handleCancel();
+            }
+        };
+        
+        const cleanup = () => {
+            modal.style.display = 'none';
+            submitBtn.removeEventListener('click', handleSubmit);
+            cancelBtn.removeEventListener('click', handleCancel);
+            input.removeEventListener('keypress', handleKeyPress);
+            modal.removeEventListener('click', handleClickOutside);
+        };
+        
+        // Event-Listener hinzufügen
+        submitBtn.addEventListener('click', handleSubmit);
+        cancelBtn.addEventListener('click', handleCancel);
+        input.addEventListener('keypress', handleKeyPress);
+        modal.addEventListener('click', handleClickOutside);
+    });
+}
+
+
 async function fetch2FAStatus(username) {
   const response = await fetch("http://localhost:3000/api/admin/check-2fa-status", {
     method: "POST",
