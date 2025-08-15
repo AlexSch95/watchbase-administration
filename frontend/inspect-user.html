@@ -29,147 +29,167 @@
           </li>
           <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addactor.html">Schauspieler
               hinzufügen</a></li>
-          <li class="nav-item"><a class="nav-link btn btn-outline-danger active" href="./inspect-user.html">Userverwaltung</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-outline-danger active"
+              href="./inspect-user.html">Userverwaltung</a></li>
           <li class="nav-item"><a class="nav-link btn btn-outline-danger" id="logout">Logout</a></li>
 
         </ul>
       </div>
     </div>
   </nav>
-  <div class="container">
-    <div id="userSearchContainer" class="row justify-contend-center">
-      <div class="text-center mt-5 mx-auto col-md-8">
-        <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
-          <span id="errorText"></span>
-        </div>
-        <div class="mb-3 row">
-          <div class="col">
-            <div class="gap-1 row">
-              <input type="text" class="form-control col" id="userSearch" placeholder="Benutzernamen eingeben...">
-              <button class="btn btn-danger text-center me-1 col-1 btn-square" id="searchUserBtn" type="button">Suchen</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="userInfo" class="row justify-content-center">
-        <div class="mt-5 mx-auto col-md-8">
-          <div class="card fade" id="generalUserInfoCard">
-            <div class="card-body">
-              <div class="row">
-                <h4 class="card-title mb-3">Benutzer: <span id="userUserNameSpan"></span></h4>
-                <hr>
-              </div>
-              <div class="row">
-                <div class="col-3">
-                  <img class="w-100" src="/assets/img/avatar-placeholder.png" alt="">
-                </div>
-                <div class="col ms-2">
-                  <div class="row">
-                    <div class="col">
-                      <p class="mb-1">
-                        <span class="muted">Vorname: </span><span class="muted" id="userCardName"></span>
-                      </p>
-                      <p class="mb-1">
-                        <span class="muted">Nachname: </span><span class="muted" id="userCardName"></span>
-                      </p>
-                      <p class="mb-1">
-                        <span class="muted">Email: </span><span class="muted" id="userCardName"></span>
-                      </p>
-
-                    </div>
-                    <div class="col">
-                      <p class="mb-1">
-                        <span class="muted">Geburstdatum: </span><span class="muted" id="userCardName"></span>
-                      </p>
-                      <p class="mb-1">
-                        <span class="muted">Nationalität: </span><span class="muted" id="userCardName"></span>
-                      </p>
-                    </div>
+  <div class="mt-5 mx-auto col-md-8">
+    <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
+      <span id="errorText"></span>
+    </div>
+    <div class="container">
+      <div>
+        <ul class="nav" role="tablist">
+          <li class="nav-item" role="presentation"><a
+              class="nav-link btn btn-outline-danger text-white text-decoration-none active" role="tab"
+              data-bs-toggle="tab" href="#user-search">Nutzer verwalten</a></li>
+          <li class="nav-item" role="presentation"><a
+              class="nav-link btn btn-outline btn-danger text-white text-decoration-none" role="tab"
+              data-bs-toggle="tab" href="#user-creation" disabled>Nutzer anlegen</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="user-search" class="tab-pane active" role="tabpanel">
+            <div id="userSearchContainer" class="mt-5 row justify-content-center mx-auto">
+              <div class="mb-3 row justify-content-center">
+                <div class="col">
+                  <div class="gap-1 row justify-content-center">
+                    <input type="text" class="form-control w-50" id="userSearch"
+                      placeholder="Benutzernamen eingeben...">
+                    <button class="btn btn-danger text-center me-1 w-25 btn-square" id="searchUserBtn"
+                      type="button">Suchen</button>
                   </div>
-                  <hr>
-                  <div class="row mt-2">
-                    <div class="col">
-                      <div class="row">
-                        <p class="mb-1">
-                          <span class="muted">Zuletzt bearbeitet: </span><span class="muted" id="userCardName"></span>
-                        </p>
-                        <p class="mb-1">
-                          <span class="muted">Uhrzeit: </span><span class="muted" id="userCardName"></span>
-                        </p>
-                        <p class="mb-1">
-                          <span class="muted">Bearbeiter: </span><span class="muted" id="userCardName"></span>
-                        </p>
+                </div>
+              </div>
+            </div>
+            <div id="userInfo" class="row justify-content-center">
+              <div class="mt-5 mx-auto col-md-8">
+                <div class="card fade" id="generalUserInfoCard">
+                  <div class="card-body">
+                    <div class="row">
+                      <h4 class="card-title mb-3">Benutzer: <span id="userUserNameSpan"></span></h4>
+                      <hr>
+                    </div>
+                    <div class="row">
+                      <div class="col-3">
+                        <img class="w-100" src="/assets/img/avatar-placeholder.png" alt="">
+                      </div>
+                      <div class="col ms-2">
+                        <div class="row">
+                          <div class="col">
+                            <p class="mb-1">
+                              <span class="fw-bold">User-ID: </span><span id="userIdSpan"></span>
+                            </p>
+                            <p class="mb-1">
+                              <span class="fw-bold">Rolle: </span><span id="userRoleSpan"></span>
+                            </p>
+                            <p class="mb-1">
+                              <span class="fw-bold">2-Faktor-Status: </span><span id="userCard2faStatus"></span>
+                            </p>
+
+                            <p class="mb-1">
+                              <span class="fw-bold">Accountstatus: </span><span id="userCardAccStatus"></span>
+                            </p>
+                          </div>
+                          <div class="col">
+                            <div class="col text-center">
+                              <button class="btn btn-danger btn-sm w-100 m-1" id="getUserWatchlistBtn">User-Watchlist
+                                betrachten</button>
+                              <button class="btn btn-danger btn-sm w-100 m-1" id="unlockUserBtn"></button>
+                              <button class="btn btn-danger btn-sm w-100 m-1" id="setAdminPrivilege"
+                                disabled>Administratorberechtigung
+                                erteilen</button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="col">
-                      <p class="mb-1">
-                        <span class="muted">Zuletzt angemeldet: </span><span class="muted" id="userCardName"></span>
-                      </p>
-                      <p class="mb-1">
-                        <span>Rolle: </span><span id="userRoleSpan"></span>
-                      </p>
-                      <p class="mb-1">
-                        <span>User-ID: </span><span id="userIdSpan"></span>
-                      </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="userWatchlist" class="row justify-content-center">
+              <div class="mt-5 mx-auto col-md-8">
+                <div class="card fade" id="userWatchlistCard">
+                  <div class="card-body p-0">
+                    <div class="row">
+                      <h4 class="card-title mb-3">Tabelle user_movies: <span id="userUserNameSpan"></span></h4>
+                      <hr>
+                    </div> <!-- p-0 entfernt Padding, falls nötig -->
+                    <div class="row">
+                      <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <!-- Scrollbar bei Bedarf -->
+                        <table id="tableContent" class="table table-dark table-striped table-bordered m-0"
+                          cellspacing="0" width="100%">
+                          <!-- Tabelleninhalt -->
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-
             </div>
-            <div class="row mt-3">
-              <div class="col text-center">              
-                <button class="btn btn-danger w-75" id="getUserWatchlistBtn">User-Watchlist betrachten</button>
-              </div>              
-              <div class="col text-center">              
-                <button class="btn btn-danger w-75" id="setAdminPrivilege" disabled>Administratorberechtigung erteilen</button>
+          </div>
+          <div id="user-creation" class="tab-pane" role="tabpanel">
+            <div id="userInfo" class="row justify-content-center">
+              <div class="mt-5 mx-auto col-md-8">
+                <div class="card fade show" id="generalUserInfoCard">
+                  <div class="card-body">
+                    <div class="row">
+                      <form id="registerForm" method="POST">
+                            <div class="mb-3">
+                                <input id="registerUsername" class="form-control form-control-lg" type="text"
+                                    name="username" placeholder="Benutzername" required>
+                            </div>
+                            <div class="mb-3">
+                                <input id="registerPassword" class="form-control form-control-lg" type="password"
+                                    name="password" onChange="checkEqual()" placeholder="Initialpasswort" required>
+                            </div>
+                            <div class="mb-4">
+                                <input id="registerPasswordRepeat" class="form-control form-control-lg" type="password"
+                                    name="password" onChange="checkEqual()" placeholder="Initialpasswort wiederholen" required>
+                            </div>
+                            <div class="form-check mb-5">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="adminRoleCheckbox"
+                                value="admin"
+                              />
+                              <label class="form-check-label" for="adminRoleCheckbox">Administratorrechte</label>
+                            </div>
+                            
+                            
+                            <div class="d-grid mb-3">
+                                <button class="btn btn-danger btn-lg" type="submit">
+                                    Benutzer anlegen
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div id="userWatchlist" class="row justify-content-center">
-  <div class="mt-5 mx-auto col-md-8">
-    <div class="card fade" id="userWatchlistCard">
-      <div class="card-body p-0">
-        <div class="row">
-          <h4 class="card-title mb-3">Tabelle user_movies: <span id="userUserNameSpan"></span></h4>
-          <hr>
-        </div> <!-- p-0 entfernt Padding, falls nötig -->
-        <div class="row">
-        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;"> <!-- Scrollbar bei Bedarf -->
-          <table id="tableContent" class="table table-dark table-striped table-bordered m-0" cellspacing="0" width="100%">
-            <!-- Tabelleninhalt -->
-          </table>
-        </div>
-        </div>
-      </div>
+
+
+
+
+
+
+
+
+
+
+
     </div>
   </div>
-</div>
-</div>
-</div>
-
-
-<!-- Modal -->
-<div class="modal fade show" id="editUserModal" tabindex="999">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: fit-content; width: auto; max-height: 90vh;">
-        <div class="modal-content card" style="max-height: 90vh; display: flex; flex-direction: column;">
-            <div class="modal-header">
-                <h5 class="modal-title">Tabelle: <span id="modalTableName"></span></h5>
-                <button type="button" class="btn-close btn-primary" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body" style="overflow: auto; min-width: 200px; flex-grow: 1;">
-                <div> 
-
-                </div>
-            </div>
-            <div class="modal-footer">
-                <span class="text-start">Zeilen: </span><span id="modalRowCount">1</span>
-            </div>
-        </div>
-    </div>
-</div>
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>

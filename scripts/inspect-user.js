@@ -63,9 +63,18 @@ function fillUserDisplay(data) {
     const userNameDisplay = document.getElementById("userUserNameSpan");
     const userIdDisplay = document.getElementById("userIdSpan");
     const userRoleDisplay = document.getElementById("userRoleSpan");
+    const user2faDisplay = document.getElementById("userCard2faStatus");
+    const userAccStatus = document.getElementById("userCardAccStatus");
+    const unlockUserBtn = document.getElementById("unlockUserBtn");
+    
+
+
     userNameDisplay.textContent = data.user_name;
     userIdDisplay.textContent = data.user_id;
-    userRoleDisplay.textContent = data.administrator;
+    userRoleDisplay.textContent = data.administrator === 0 ? "User" : "Admin";
+    user2faDisplay.innerHTML = data.twofactor_enabled === 0 ? `<span class="text-inactive">Inaktiv</span>` : `<span class="text-active">Aktiv</span>`
+    userAccStatus.innerHTML = data.access_enabled === 0 ? `<span class="text-inactive">Gesperrt</span>` : `<span class="text-active">Aktiv</span>`
+    unlockUserBtn.textContent = data.access_enabled === 0 ? "Nutzer entsperren" : "Nutzer sperren"
     userInfoContainer.classList.add("show");
 }
 

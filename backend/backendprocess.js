@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cors = require("cors");
+const speakeasy = require("speakeasy");
+const qrcode = require("qrcode");
 const { connectToDatabase } = require("./db.js");
 const bcrypt = require("bcrypt");
 require('dotenv').config()
@@ -64,7 +66,7 @@ function authenticateToken(req, res, next) {
 async function checkAdminPrivilege(req, res, next) {
   try {
     const connection = await connectToDatabase();
-    const [rows] = await connection.execute('SELECT administrator FROM users WHERE user_id = ?', [req.id]);
+    const [rows] = await connection.execute('SELECT * FROM users WHERE user_id = ?', [req.id]);
     await connection.end();
     if (rows.length === 0 || rows[0].administrator !== 1) {
       return res.status(403).json({
@@ -72,6 +74,12 @@ async function checkAdminPrivilege(req, res, next) {
         message: "Benutzer hat keine Administratorberechtigung."
       })
     }
+    // if (rows[0].access_enabled === 0) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: "Benutzerkonto ist nicht freigegeben"
+    //   })
+    // }
     next();
   } catch (error) {
     console.error(`Fehler in Middleware "checkAdminPrivilege": ${error}`);
@@ -158,6 +166,195 @@ app.post("/api/admin/login", async (req, res) => {
   }
 });
 
+app.post("/api/admin/login-2fa", async (req, res) => {
+  try {
+    const {username, password, twofactorToken} = req.body;
+    if (username === undefined || password === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: "Kein Benutzername oder Passwort übermittelt."
+      });
+    }
+    const connection = await connectToDatabase();
+    // Überprüfe, ob Username existiert
+    const [existingUsers] = await connection.execute(
+      'SELECT * FROM users WHERE user_name = ?', [username]
+    );
+    await connection.end();
+    if (existingUsers.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Es existiert kein Benutzer mit diesem Benutzernamen."
+      });
+    }
+    const user = existingUsers[0];
+    const passwordHash = user.password_hash;
+    // Ab hier: Passwort-Hash überprüfen
+    const passwordCorrect = await bcrypt.compare(password, passwordHash);
+    if (passwordCorrect === false) {
+      return res.status(401).json({
+        success: false, 
+        message: "Das eingegebene Passwort ist nicht korrekt."
+      });
+    } else if (user.administrator !== 1) {
+      return res.status(401).json({
+        success: false, 
+        message: "Benutzer hat keine Administratorberechtigung."
+      })
+    }
+    // Objekt erstellen, das in unserem token mit jsonwebtoken gesigned wird
+    const tokenUser = {
+      id: user.user_id,
+      username: user.user_name,
+      adminRole: user.administrator
+    }
+    //erstellen des verschlüsselten Tokens mit jwt.sign
+    const token = jwt.sign(tokenUser, secretKey, { expiresIn: '1h' });
+    //antwort ans frontend inklusive des erstellten, verschlüsselten tokens
+    const verified = speakeasy.totp.verify({
+      secret: user.twofactor_secret,
+      encoding: 'base32',
+      token: twofactorToken,
+      window: 1
+    })
+    if (!verified) {
+      return res.status(401).json({
+        success : false,
+        message: "Ungültiger 2FA-Code. Bitte erneut versuchen."
+      })
+    }
+    res.status(200).json({
+      success: true,
+      message: `Anmeldung mit 2-Faktor-Authentifizierung als ${username} erfolgreich.`,
+      token: token,
+      userName: user.user_name
+    })
+    
+  } catch (error) {
+    console.error(`Fehler in Route "/api/admin/login": ${error}`);
+    res.status(500).json({
+      success: false, 
+      message: "Interner Severfehler, Systemadministrator kontaktieren."
+    })
+  }
+});
+
+
+app.post("/api/admin/check-2fa-status", async (req, res) => {
+  try {
+    const {username} = req.body
+    const connection = await connectToDatabase();
+    const response = await connection.execute("SELECT * FROM users WHERE user_name = ?", [username])
+    await connection.end()
+    const user = response[0]
+    if (user[0].twofactor_enabled === 0) {
+      console.log("test");
+      return res.status(400).json({
+        success: true,
+        message: "2-Faktor-Authentifizierung ist nicht aktiv",
+        isactive2fa: false
+      })
+    }
+    res.status(200).json({
+      success: true,
+      message: "2-Faktor-Authentifizierung ist aktiv",
+      isactive2fa: true
+    })
+  } catch (error) {
+    console.error(`Fehler in Route "/api/admin/check-2fa-status": ${error}`);
+    res.status(500).json({
+      success: false, 
+      message: "Interner Severfehler, Systemadministrator kontaktieren."
+    })
+  }
+})
+
+
+app.post("/api/admin/register", async (req, res) => {
+  try {
+    // Username und Passwort auslesen
+    const {username, password} = req.body;
+    if (username === undefined || password === undefined) {
+      return res.status(400).json({ error: "Username oder Passwort nicht übergeben." });
+    }
+    const tempSecret = speakeasy.generateSecret({ 
+      name: `watchbaseAdmin:${username}`,
+      issuer: "WatchBase Admin"
+    });
+    const qrCodeUrl = await new Promise((resolve, reject) => {
+      qrcode.toDataURL(tempSecret.otpauth_url, (err, url) => {
+        if (err) reject(err);
+        else resolve(url);
+      })
+    })
+    const connection = await connectToDatabase();
+    // Überprüfe, ob Username schon vergeben
+    const [existingUsers] = await connection.execute(
+      'SELECT * FROM users WHERE user_name = ?', [username]
+    );
+    if (existingUsers.length > 0) {
+        return res.status(500).json({
+          success: false,
+          message: "Username existiert schon." });
+    }
+    // Ab hier: User erstellen
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const [newUser] = await connection.execute(
+      'INSERT INTO users (user_name, password_hash, administrator, twofactor_secret, twofactor_enabled) VALUES (?, ?, 1, ?, TRUE)', [username, hashedPassword, tempSecret.base32]
+    );
+    await connection.end();
+    res.status(201).json({
+      success: true,
+      message: `User ${username} erfolgreich erstellt. Scanne den QR-Code mit deiner 2FA-App.`,
+      qrUrl: qrCodeUrl,
+      manualSecret: tempSecret.base32
+    })
+  } catch (error) {
+    return res.status(500).json({ error: "Fehler beim Erstellen des Users." });
+  }
+});
+
+app.post("/api/admin/verify-2fa", async (req, res) => {
+  try {
+    const {username, verifyCode } = req.body;
+    const connection = await connectToDatabase();
+    const [users] = await connection.execute("SELECT user_id, user_name, twofactor_secret, twofactor_enabled FROM users WHERE user_name = ?", [username]) 
+    await connection.end();
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Benutzer nicht gefunden"
+      })
+    }
+    const user = users[0];
+    if (user.twofactor_enabled === 0) {
+      return res.status(400).json({
+        success : false,
+        message: "2-Faktor-Authentifizierung ist für diesen Benutzer nicht aktiviert"
+      })
+    }
+    const verified = speakeasy.totp.verify({
+      secret: user.twofactor_secret,
+      encoding: 'base32',
+      token: verifyCode,
+      window: 1
+    })
+    if (!verified) {
+      return res.status(401).json({
+        success : false,
+        message: "Ungültiger 2-Faktor-Authentifizierungscode"
+      })
+    }
+    return res.status(200).json({
+      success: true,
+      message: "2-Faktor-Authentifizierung erfolgreich"
+    })
+  } catch (error) {
+    console.error(error);
+  }
+})
+
 //Route um Statistiken über die Datenbank abzurufen mit Middleware zur Tokenprüfung und Berechtigungsprüfung
 app.get('/api/overview/db-stats', authenticateToken, checkAdminPrivilege, async (req, res) => {
   try {
@@ -243,7 +440,7 @@ app.get("/api/users/search/:userName", authenticateToken, checkAdminPrivilege, a
   try {
     const userName = req.params.userName;
     const connection = await connectToDatabase();
-    const [result] = await connection.execute("SELECT user_id, user_name, administrator FROM users WHERE user_name = ?", [userName]);
+    const [result] = await connection.execute("SELECT user_id, user_name, administrator, twofactor_enabled, access_enabled FROM users WHERE user_name = ?", [userName]);
     if (result.length === 0) {
       return res.status(404).json({
         success: false,
