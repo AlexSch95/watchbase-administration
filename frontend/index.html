@@ -48,51 +48,6 @@
                 </div>
             </div>
         </div>
-        <div class="row justify-content-center mt-5">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-                <div class="card shadow-sm">
-                    <div class="card-body p-2">
-                        <form id="registerForm" method="POST">
-                            <div class="mb-3">
-                                <input id="registerUsername" class="form-control form-control-lg" type="text"
-                                    name="username" placeholder="Benutzername" required>
-                            </div>
-                            <div class="mb-3">
-                                <input id="registerPassword" class="form-control form-control-lg" type="password"
-                                    name="password" onChange="checkEqual()" placeholder="Passwort" required>
-                            </div>
-                            <div class="mb-4">
-                                <input id="registerPasswordRepeat" class="form-control form-control-lg" type="password"
-                                    name="password" onChange="checkEqual()" placeholder="Passwort wiederholen" required>
-                            </div>
-                            <div class="d-grid mb-3">
-                                <button class="btn btn-danger btn-lg" type="submit">
-                                    Registrieren
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row justify-content-center mt-5">
-            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-                <div class="card shadow-sm" id="qrCodeContainer" style="display: none;">
-                    <div class="card-body p-2">
-                        <div>
-                            <img class="m-3" id="qrCode" src="" alt="QR-Code">
-                            <p>Scanne diesen QR-Code mit Google Authenticator oder anderen gängigen 2FA-Applikationen.
-                            </p>
-                            <div class="row">
-                                <input class="col form-control w-50" type="text" id="verifyCode"
-                                    placeholder="6-stelliger Code">
-                                <button class="col-3 btn btn-sm btn-danger" id="verifyBtn">Verifizieren</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
 
