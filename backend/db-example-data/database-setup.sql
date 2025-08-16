@@ -46,7 +46,10 @@ CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    administrator BOOLEAN DEFAULT 0
+    twofactor_secret TEXT,
+    twofactor_enabled BOOLEAN DEFAULT 0,
+    administrator BOOLEAN DEFAULT 1,
+    access_enabled BOOLEAN DEFAULT 1
 );
 
 CREATE TABLE user_movies (

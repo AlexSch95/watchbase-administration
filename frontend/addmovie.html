@@ -6,21 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Watchbase-Admin: Film anlegen</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:200,300,400,500,600,700,800&amp;display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit:200,300,400,500,600,700,800,900&amp;display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Inter:200,300,400,500,600,700,800&amp;display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Outfit:200,300,400,500,600,700,800,900&amp;display=swap">
     <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 
 <body class="background-image">
     <nav class="navbar navbar-expand-lg py-3" data-bs-theme="dark">
-        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="fs-3 fw-bold"><span class="brand-administrate">administrate(</span>watchBase<span class="brand-administrate">);</span></span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-3"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span
+                    class="fs-3 fw-bold"><span class="brand-administrate">administrate(</span>watchBase<span
+                        class="brand-administrate">);</span></span></a><button data-bs-toggle="collapse"
+                class="navbar-toggler" data-bs-target="#navcol-3"><span class="visually-hidden">Toggle
+                    navigation</span><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navcol-3">
                 <ul class="navbar-nav mb-4 mb-lg-0 mx-auto">
-                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./overview.html">Übersicht</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-outline-danger active" href="./addmovie.html">Film hinzufügen</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addgenre.html">Genre hinzufügen</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addactor.html">Schauspieler hinzufügen</a></li>
-                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./inspect-user.html">Userverwaltung</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./overview.html">Übersicht</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger active" href="./addmovie.html">Film
+                            hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addgenre.html">Genre
+                            hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger" href="./addactor.html">Schauspieler
+                            hinzufügen</a></li>
+                    <li class="nav-item"><a class="nav-link btn btn-outline-danger"
+                            href="./inspect-user.html">Userverwaltung</a></li>
                     <li class="nav-item"><a class="nav-link btn btn-outline-danger" id="logout">Logout</a></li>
 
                 </ul>
@@ -28,9 +39,6 @@
         </div>
     </nav>
     <div class="container">
-        <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
-            <span id="errorText"></span>
-        </div>
         <div id="newMovie" class="row justify-content-center"> <!-- Korrektur: justify-content-center -->
             <div class="mt-5 col-md-8">
                 <form id="movieForm" class="needs-validation" novalidate>
@@ -42,10 +50,11 @@
                         </div>
                         <div class="col-md-6">
                             <label for="director" class="form-label">Regisseur</label>
-                            <input type="text" class="form-control" id="director" placeholder="Christopher Nolan" required>
+                            <input type="text" class="form-control" id="director" placeholder="Christopher Nolan"
+                                required>
                         </div>
                     </div>
-    
+
                     <!-- 2. Zeile: Erscheinungsjahr und Rating -->
                     <div class="mb-4 row g-3">
                         <div class="col-md-6">
@@ -55,11 +64,11 @@
                         </div>
                         <div class="col-md-6">
                             <label for="rating" class="form-label">Rating</label>
-                            <input type="number" class="form-control" id="rating" placeholder="1-10" min="1.0" max="10.0"
-                                step="0.1" required>
+                            <input type="number" class="form-control" id="rating" placeholder="1-10" min="1.0"
+                                max="10.0" step="0.1" required>
                         </div>
                     </div>
-    
+
                     <!-- Genre Auswahl -->
                     <div class="mb-4">
                         <label class="form-label">Genre</label>
@@ -77,7 +86,7 @@
                             <input type="hidden" id="genres" name="genres">
                         </div>
                     </div>
-    
+
                     <!-- Schauspieler Auswahl -->
                     <div class="mb-4">
                         <label class="form-label">Schauspieler</label>
@@ -95,13 +104,13 @@
                             <input type="hidden" id="actors" name="actors">
                         </div>
                     </div>
-    
+
                     <!-- Beschreibung -->
                     <div class="mb-4">
                         <label for="description" class="form-label">Kurzbeschreibung</label>
                         <textarea class="form-control" id="description" rows="3" required></textarea>
                     </div>
-    
+
                     <!-- URLs -->
                     <div class="mb-4 row g-3">
                         <div class="col-md-6">
@@ -115,7 +124,7 @@
                                 placeholder="https://example.com/poster.jpg" required>
                         </div>
                     </div>
-    
+
                     <!-- Submit Button -->
                     <div class="d-grid">
                         <button class="btn btn-danger py-2" type="submit">Filmkarte & Modal zur Überprüfung
@@ -127,6 +136,9 @@
     </div>
     <div class="container py-5">
         <div class="row" id="movieCardPreview"></div>
+    </div>
+    <div id="errorMessage" class="alert mx-auto mt-3 fade w-50 text-center" role="alert">
+        <span id="errorText"></span>
     </div>
     </div>
 
